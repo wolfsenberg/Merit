@@ -1,8 +1,7 @@
 "use client";
 
 import { useState, createContext, useContext, useEffect } from "react";
-import { Monitor, Smartphone } from "lucide-react";
-import { useLang } from "@/lib/i18n";
+import { Monitor, Smartphone, Languages } from "lucide-react";
 
 interface MobilePreviewContextType {
   isMobilePreview: boolean;
@@ -17,8 +16,7 @@ export function useMobilePreview() {
 
 function getStoredView(): boolean {
   if (typeof window === "undefined") return false;
-  const stored = localStorage.getItem("merit_view_mode");
-  return stored === "mobile";
+  return localStorage.getItem("merit_view_mode") === "mobile";
 }
 
 export function MobilePreviewWrapper({ children }: { children: React.ReactNode }) {
@@ -36,14 +34,11 @@ export function MobilePreviewWrapper({ children }: { children: React.ReactNode }
     localStorage.setItem("merit_view_mode", next ? "mobile" : "desktop");
   };
 
-  // Prevent flash on mount
-  if (!mounted) {
-    return <>{children}</>;
-  }
+  if (!mounted) return <>{children}</>;
 
   return (
     <MobilePreviewContext.Provider value={{ isMobilePreview, toggle }}>
-      {/* Toggle buttons — fixed bottom right */}
+      {/* Floating controls — bottom right */}
       <div className="fixed bottom-6 right-6 z-[9999] hidden md:flex flex-col gap-2 items-end">
         <button
           onClick={toggle}
@@ -55,7 +50,7 @@ export function MobilePreviewWrapper({ children }: { children: React.ReactNode }
             <><Smartphone className="h-3.5 w-3.5" /> Mobile View</>
           )}
         </button>
-        <LangToggle />
+        <LangToggleButton />
       </div>
 
       {isMobilePreview ? (
@@ -71,14 +66,32 @@ export function MobilePreviewWrapper({ children }: { children: React.ReactNode }
   );
 }
 
-function LangToggle() {
-  const { lang, setLang } = useLang();
+// Self-contained lang toggle that reads/writes localStorage directly
+// (doesn't depend on LangProvider context order)
+function LangToggleButton() {
+  const [lang, setLang] = useState<"en" | "tl">("en");
+
+  useEffect(() => {
+    const stored = localStorage.getItem("merit_lang");
+    if (stored === "tl") setLang("tl");
+  }, []);
+
+  const handleToggle = () => {
+    const next = lang === "en" ? "tl" : "en";
+    setLang(next);
+    localStorage.setItem("merit_lang", next);
+    // Force re-render across app
+    window.dispatchEvent(new Event("merit-lang-change"));
+    window.location.reload();
+  };
+
   return (
     <button
-      onClick={() => setLang(lang === "en" ? "tl" : "en")}
+      onClick={handleToggle}
       className="flex items-center gap-2 rounded-full bg-merit-gold px-4 py-2.5 text-[12px] font-medium text-white shadow-xl hover:bg-gold-500 transition-all hover:scale-105"
     >
-      {lang === "en" ? "🇵🇭 Taglish" : "🇺🇸 English"}
+      <Languages className="h-3.5 w-3.5" />
+      {lang === "en" ? "Taglish" : "English"}
     </button>
   );
 }

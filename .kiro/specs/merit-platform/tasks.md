@@ -102,7 +102,7 @@ Implementation of the Merit AI-assisted conditional funding platform. The backen
     - Implement organization-scoped listing with cursor-based pagination
     - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5, 3.6, 3.7, 3.8, 14.8_
 
-  - [x] 5.2 Implement requirement management
+  - [x6] 5.2 Implement requirement management
     - Add/remove requirements with type, condition_operator, condition_value, is_mandatory, verification_frequency
     - Support all requirement types: academic_gwa, enrollment_status, document_submission, milestone_completion, attendance, custom
     - _Requirements: 3.9, 3.10_

@@ -5,11 +5,7 @@ import { usePathname } from "next/navigation";
 import { getUser } from "@/lib/auth";
 import { cn } from "@/lib/utils";
 
-export interface NavItem {
-  label: string;
-  href: string;
-  icon: string;
-}
+export interface NavItem { label: string; href: string; icon: string; }
 
 const orgAdminNav: NavItem[] = [
   { label: "Dashboard", href: "/dashboard", icon: "📊" },
@@ -36,17 +32,10 @@ const adminNav: NavItem[] = [
 ];
 
 export function getNavItems(role?: string): NavItem[] {
-  switch (role) {
-    case "super_admin": return adminNav;
-    case "org_admin": return orgAdminNav;
-    default: return recipientNav;
-  }
+  switch (role) { case "super_admin": return adminNav; case "org_admin": return orgAdminNav; default: return recipientNav; }
 }
 
-interface SidebarProps {
-  isOpen: boolean;
-  onClose: () => void;
-}
+interface SidebarProps { isOpen: boolean; onClose: () => void; }
 
 export function Sidebar({ isOpen, onClose }: SidebarProps) {
   const pathname = usePathname();
@@ -55,43 +44,34 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
 
   return (
     <>
-      {/* Mobile overlay */}
-      {isOpen && (
-        <div className="fixed inset-0 z-40 bg-black/30 backdrop-blur-sm md:hidden" onClick={onClose} />
-      )}
+      {isOpen && <div className="fixed inset-0 z-40 bg-black/20 backdrop-blur-sm md:hidden" onClick={onClose} />}
 
-      {/* Sidebar */}
       <aside className={cn(
-        "fixed inset-y-0 left-0 z-50 flex w-64 flex-col bg-white border-r border-gray-100 transition-transform duration-200 ease-out md:static md:translate-x-0",
+        "fixed inset-y-0 left-0 z-50 flex w-64 flex-col bg-white border-r border-merit-peach/50 transition-transform duration-200 ease-out md:static md:translate-x-0",
         isOpen ? "translate-x-0" : "-translate-x-full"
       )}>
         {/* Logo */}
-        <div className="flex h-14 items-center px-5 border-b border-gray-100">
+        <div className="flex h-14 items-center px-5 border-b border-merit-peach/40">
           <Link href="/dashboard" className="flex items-center gap-2.5" onClick={onClose}>
-            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-amber-500 to-amber-600 shadow-sm shadow-amber-500/20">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-merit-gold shadow-sm shadow-[#F4BA45]/20">
               <span className="text-sm font-bold text-white">M</span>
             </div>
             <span className="text-lg font-bold text-gray-900">Merit</span>
           </Link>
         </div>
 
-        {/* Navigation */}
+        {/* Nav */}
         <nav className="flex-1 overflow-y-auto px-3 py-4">
           <ul className="space-y-1">
             {navItems.map((item) => {
               const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
               return (
                 <li key={item.href}>
-                  <Link
-                    href={item.href}
-                    onClick={onClose}
+                  <Link href={item.href} onClick={onClose}
                     className={cn(
                       "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all",
-                      isActive
-                        ? "bg-amber-50 text-amber-700 shadow-sm"
-                        : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-                    )}
-                  >
+                      isActive ? "bg-merit-peach text-gold-700 shadow-sm" : "text-gray-600 hover:bg-merit-cream hover:text-gray-900"
+                    )}>
                     <span className="text-base">{item.icon}</span>
                     {item.label}
                   </Link>
@@ -101,10 +81,10 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
           </ul>
         </nav>
 
-        {/* User role badge */}
-        <div className="border-t border-gray-100 p-4">
-          <div className="flex items-center gap-2 rounded-xl bg-gray-50 px-3 py-2">
-            <div className="flex h-7 w-7 items-center justify-center rounded-full bg-amber-100 text-xs font-semibold text-amber-700">
+        {/* User badge */}
+        <div className="border-t border-merit-peach/40 p-4">
+          <div className="flex items-center gap-2 rounded-xl bg-merit-cream px-3 py-2">
+            <div className="flex h-7 w-7 items-center justify-center rounded-full bg-merit-peach text-xs font-semibold text-gold-700">
               {user?.full_name?.charAt(0)?.toUpperCase() || "U"}
             </div>
             <div className="min-w-0 flex-1">

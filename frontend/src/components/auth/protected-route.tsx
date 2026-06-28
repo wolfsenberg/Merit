@@ -21,10 +21,12 @@ export function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) 
 
   if (!isReady) {
     return (
-      <div className="flex h-screen items-center justify-center bg-merit-cream">
-        <div className="flex flex-col items-center gap-3">
-          <div className="h-9 w-9 animate-spin rounded-full border-[3px] border-merit-sky border-t-transparent" />
-          <p className="text-xs text-gray-400">Loading...</p>
+      <div className="flex h-screen flex-col items-center justify-center bg-merit-cream">
+        <img src="/logo.svg" alt="Merit" className="h-12 w-12 mb-4 drop-shadow-md" />
+        <div className="flex items-center gap-1.5 mt-2">
+          <div className="h-1.5 w-1.5 rounded-full bg-merit-sky animate-bounce [animation-delay:0ms]" />
+          <div className="h-1.5 w-1.5 rounded-full bg-merit-sky animate-bounce [animation-delay:150ms]" />
+          <div className="h-1.5 w-1.5 rounded-full bg-merit-sky animate-bounce [animation-delay:300ms]" />
         </div>
       </div>
     );

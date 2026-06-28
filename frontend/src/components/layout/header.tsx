@@ -17,9 +17,7 @@ export function Header({ onMenuToggle }: HeaderProps) {
       </button>
 
       <Link href="/dashboard" className="flex items-center gap-2 md:hidden ml-2">
-        <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-merit-gold">
-          <span className="text-xs font-bold text-white">M</span>
-        </div>
+        <img src="/logo.svg" alt="Merit" className="h-7 w-7" />
         <span className="text-base font-bold text-gray-900">Merit</span>
       </Link>
 

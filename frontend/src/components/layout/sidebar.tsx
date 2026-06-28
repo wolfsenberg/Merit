@@ -53,9 +53,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
         {/* Logo */}
         <div className="flex h-14 items-center px-5 border-b border-merit-peach/40">
           <Link href="/dashboard" className="flex items-center gap-2.5" onClick={onClose}>
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-merit-gold shadow-sm shadow-[#F4BA45]/20">
-              <span className="text-sm font-bold text-white">M</span>
-            </div>
+            <img src="/logo.svg" alt="Merit" className="h-9 w-9 drop-shadow-sm" />
             <span className="text-lg font-bold text-gray-900">Merit</span>
           </Link>
         </div>

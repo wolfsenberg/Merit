@@ -57,8 +57,8 @@ export default function LoginPage() {
       <div className="relative w-full max-w-sm space-y-8">
         {/* Logo */}
         <div className="text-center">
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-merit-gold shadow-lg shadow-[#F4BA45]/30">
-            <span className="text-2xl font-bold text-white">M</span>
+          <div className="mx-auto mb-4">
+            <img src="/logo.svg" alt="Merit" className="mx-auto h-16 w-16 drop-shadow-md" />
           </div>
           <h1 className="text-2xl font-bold tracking-tight text-gray-900">Welcome back</h1>
           <p className="mt-1 text-sm text-gray-500">Sign in to your Merit account</p>

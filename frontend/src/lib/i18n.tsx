@@ -8,7 +8,7 @@ export type Lang = "en" | "tl";
 const translations: Record<string, Record<Lang, string>> = {
   // Nav
   "nav.home": { en: "Home", tl: "Home" },
-  "nav.feed": { en: "Feed", tl: "Feed" },
+  "nav.feed": { en: "Hub", tl: "Hub" },
   "nav.savings": { en: "Savings", tl: "Ipon" },
   "nav.history": { en: "History", tl: "Talaan" },
   "nav.wallet": { en: "Wallet", tl: "Wallet" },

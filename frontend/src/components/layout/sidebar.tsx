@@ -22,7 +22,7 @@ const orgAdminNav: NavItem[] = [
 
 const recipientNav: NavItem[] = [
   { label: "Home", href: "/dashboard", icon: LayoutGrid },
-  { label: "Scholarships", href: "/programs/browse", icon: Search },
+  { label: "Scholars Hub", href: "/programs/browse", icon: Search },
   { label: "Transactions", href: "/transactions", icon: Receipt },
   { label: "Savings", href: "/savings", icon: PiggyBank },
   { label: "Wallet", href: "/wallet", icon: Wallet },

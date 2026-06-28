@@ -6,7 +6,7 @@ import { getUser } from "@/lib/auth";
 import { cn } from "@/lib/utils";
 import {
   LayoutGrid, FileText, ShieldCheck, BarChart3, Bell,
-  Search, Wallet, Users, Building2, ScrollText, Zap, Receipt, PiggyBank,
+  Search, Wallet, Users, Building2, ScrollText, Zap, Receipt, PiggyBank, Info,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
@@ -56,15 +56,17 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
         "fixed inset-y-0 left-0 z-50 flex w-[260px] flex-col bg-white/95 backdrop-blur-xl border-r border-black/[0.04] transition-transform duration-200 ease-out md:static md:translate-x-0",
         isOpen ? "translate-x-0" : "-translate-x-full"
       )}>
-        {/* Logo */}
-        <div className="flex h-[60px] items-center px-6">
-          <Link href="/dashboard" className="flex items-center gap-3" onClick={onClose}>
+        {/* Logo + Merit + Info — above nav items */}
+        <div className="flex h-[60px] items-center gap-2.5 px-6 border-b border-black/[0.03]">
+          <Link href="/dashboard" className="flex items-center gap-2.5" onClick={onClose}>
             <img src="/logo.svg" alt="Merit" className="h-8 w-8" />
+            <span className="text-[17px] font-semibold tracking-tight text-gray-900">Merit</span>
           </Link>
+          <InfoButton />
         </div>
 
         {/* Nav */}
-        <nav className="flex-1 overflow-y-auto px-3 pt-2">
+        <nav className="flex-1 overflow-y-auto px-3 pt-4">
           <ul className="space-y-0.5">
             {navItems.map((item) => {
               const Icon = item.icon;
@@ -101,5 +103,17 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
         </div>
       </aside>
     </>
+  );
+}
+
+function InfoButton() {
+  return (
+    <button
+      onClick={() => { localStorage.removeItem("merit_onboarding_seen"); window.location.href = "/onboarding"; }}
+      className="flex h-5 w-5 items-center justify-center rounded-full border border-black/[0.08] text-gray-400 hover:text-merit-gold hover:border-merit-gold/30 transition-colors"
+      aria-label="About Merit"
+    >
+      <Info className="h-3 w-3" strokeWidth={2} />
+    </button>
   );
 }

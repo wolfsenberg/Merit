@@ -41,11 +41,11 @@ export function Header({ onMenuToggle }: HeaderProps) {
           <Menu className="h-[18px] w-[18px]" strokeWidth={1.8} />
         </button>
 
-        <Link href="/dashboard" className="flex items-center gap-2 ml-2">
+        <Link href="/dashboard" className="flex items-center gap-2 ml-2 md:hidden">
           <img src="/logo.svg" alt="Merit" className="h-6 w-6" />
           <span className="text-[15px] font-semibold text-gray-900">Merit</span>
         </Link>
-        <button onClick={() => { setShowInfo(true); setInfoSlide(0); }} className="ml-1 flex h-5 w-5 items-center justify-center rounded-full border border-black/[0.08] text-gray-400 hover:text-merit-gold hover:border-merit-gold/30 transition-colors" aria-label="About Merit">
+        <button onClick={() => { setShowInfo(true); setInfoSlide(0); }} className="ml-1 flex h-5 w-5 items-center justify-center rounded-full border border-black/[0.08] text-gray-400 hover:text-merit-gold hover:border-merit-gold/30 transition-colors md:hidden" aria-label="About Merit">
           <Info className="h-3 w-3" strokeWidth={2} />
         </button>
 

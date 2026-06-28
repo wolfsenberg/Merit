@@ -7,14 +7,22 @@ from app.core.config import get_settings
 
 settings = get_settings()
 
-engine = create_async_engine(
-    settings.database_url,
-    pool_size=settings.db_pool_size,
-    max_overflow=settings.db_max_overflow,
-    pool_timeout=settings.db_pool_timeout,
-    pool_recycle=settings.db_pool_recycle,
-    echo=settings.debug,
-)
+# SQLite doesn't support connection pooling options
+_is_sqlite = settings.database_url.startswith("sqlite")
+
+_engine_kwargs = {
+    "echo": settings.debug,
+}
+
+if not _is_sqlite:
+    _engine_kwargs.update({
+        "pool_size": settings.db_pool_size,
+        "max_overflow": settings.db_max_overflow,
+        "pool_timeout": settings.db_pool_timeout,
+        "pool_recycle": settings.db_pool_recycle,
+    })
+
+engine = create_async_engine(settings.database_url, **_engine_kwargs)
 
 async_session_factory = async_sessionmaker(
     engine,
@@ -25,7 +33,6 @@ async_session_factory = async_sessionmaker(
 
 class Base(DeclarativeBase):
     """Base class for all SQLAlchemy models."""
-
     pass
 
 

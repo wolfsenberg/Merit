@@ -16,7 +16,9 @@ settings = get_settings()
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Application lifespan: startup and shutdown events."""
-    # Startup
+    # Startup - create tables for dev mode (SQLite)
+    from app.core.database import init_db
+    await init_db()
     yield
     # Shutdown
     await close_db()

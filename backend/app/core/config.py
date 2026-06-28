@@ -51,6 +51,9 @@ class Settings(BaseSettings):
     rate_limit_authenticated: int = 100
     rate_limit_unauthenticated: int = 20
 
+    # Stellar
+    stellar_network: str = "testnet"
+
     model_config = {"env_file": ".env", "env_file_encoding": "utf-8", "case_sensitive": False}
 
 

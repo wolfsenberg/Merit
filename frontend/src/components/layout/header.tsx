@@ -4,7 +4,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { clearTokens, getUser } from "@/lib/auth";
 import { disconnectFreighter, getCachedPublicKey } from "@/lib/freighter";
-import { Menu, LogOut, Wallet } from "lucide-react";
+import { Menu, LogOut, Wallet, Smartphone, Monitor } from "lucide-react";
+import { useMobilePreview } from "./mobile-preview";
 
 interface HeaderProps { onMenuToggle: () => void; }
 
@@ -12,6 +13,7 @@ export function Header({ onMenuToggle }: HeaderProps) {
   const router = useRouter();
   const user = getUser();
   const walletKey = getCachedPublicKey();
+  const { isMobilePreview, toggle } = useMobilePreview();
 
   const handleLogout = () => {
     clearTokens();
@@ -30,7 +32,12 @@ export function Header({ onMenuToggle }: HeaderProps) {
 
       <div className="flex-1" />
 
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2">
+        {/* Mobile/Desktop view toggle — only on desktop */}
+        <button onClick={toggle} className="hidden md:flex items-center gap-1.5 rounded-md border border-black/[0.06] px-2 py-1 text-[10px] font-medium text-gray-500 hover:text-gray-700 hover:border-black/[0.1] transition-colors">
+          {isMobilePreview ? <><Monitor className="h-3 w-3" /> Desktop</> : <><Smartphone className="h-3 w-3" /> Mobile</>}
+        </button>
+
         {walletKey && (
           <div className="hidden md:flex items-center gap-1.5 rounded-md bg-emerald-50 border border-emerald-100 px-2 py-1">
             <Wallet className="h-3 w-3 text-emerald-600" strokeWidth={1.8} />

@@ -41,7 +41,7 @@ export function Header({ onMenuToggle }: HeaderProps) {
           <Menu className="h-[18px] w-[18px]" strokeWidth={1.8} />
         </button>
 
-        <Link href="/dashboard" className="flex items-center gap-2 ml-2 md:ml-0">
+        <Link href="/dashboard" className="flex items-center gap-2 ml-2">
           <img src="/logo.svg" alt="Merit" className="h-6 w-6" />
           <span className="text-[15px] font-semibold text-gray-900">Merit</span>
         </Link>

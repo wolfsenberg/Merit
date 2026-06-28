@@ -60,7 +60,6 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
         <div className="flex h-[60px] items-center px-6">
           <Link href="/dashboard" className="flex items-center gap-3" onClick={onClose}>
             <img src="/logo.svg" alt="Merit" className="h-8 w-8" />
-            <span className="text-[17px] font-semibold tracking-tight text-gray-900">Merit</span>
           </Link>
         </div>
 

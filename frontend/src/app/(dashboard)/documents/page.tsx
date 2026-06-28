@@ -1,181 +1,70 @@
 "use client";
 
-import { useState, useCallback } from "react";
-import { useUploadDocument } from "@/hooks/use-api";
+import { useState } from "react";
+import { Upload, FileText, CheckCircle2, Clock, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 
-const ACCEPTED_TYPES = ["image/png", "image/jpeg", "image/webp", "application/pdf"];
-const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+interface Document {
+  id: string;
+  name: string;
+  type: string;
+  status: "verified" | "processing" | "pending" | "rejected";
+  uploadedAt: string;
+  confidence?: number;
+}
+
+const mockDocuments: Document[] = [
+  { id: "1", name: "Grade_Slip_2024_1st_Sem.pdf", type: "Grade Slip", status: "verified", uploadedAt: "Jun 20, 2026", confidence: 0.94 },
+  { id: "2", name: "Enrollment_Certificate.pdf", type: "Enrollment Form", status: "verified", uploadedAt: "Jun 20, 2026", confidence: 0.89 },
+  { id: "3", name: "Valid_ID_Scan.jpg", type: "ID Document", status: "verified", uploadedAt: "Jun 20, 2026", confidence: 0.97 },
+];
 
 export default function DocumentsPage() {
-  const [file, setFile] = useState<File | null>(null);
-  const [documentType, setDocumentType] = useState("grade_slip");
-  const [submissionId, setSubmissionId] = useState("");
-  const [dragActive, setDragActive] = useState(false);
-  const [validationError, setValidationError] = useState("");
+  const [documents] = useState<Document[]>(mockDocuments);
 
-  const uploadDocument = useUploadDocument();
-
-  const validateFile = (f: File): boolean => {
-    setValidationError("");
-    if (!ACCEPTED_TYPES.includes(f.type)) {
-      setValidationError("Invalid file type. Please upload PNG, JPEG, WebP, or PDF.");
-      return false;
-    }
-    if (f.size > MAX_FILE_SIZE) {
-      setValidationError("File too large. Maximum size is 10MB.");
-      return false;
-    }
-    return true;
-  };
-
-  const handleDrag = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (e.type === "dragenter" || e.type === "dragover") {
-      setDragActive(true);
-    } else if (e.type === "dragleave") {
-      setDragActive(false);
-    }
-  }, []);
-
-  const handleDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setDragActive(false);
-
-    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-      const droppedFile = e.dataTransfer.files[0];
-      if (validateFile(droppedFile)) {
-        setFile(droppedFile);
-      }
-    }
-  }, []);
-
-  const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      const selectedFile = e.target.files[0];
-      if (validateFile(selectedFile)) {
-        setFile(selectedFile);
-      }
-    }
-  };
-
-  const handleUpload = async () => {
-    if (!file || !submissionId) return;
-    await uploadDocument.mutateAsync({ file, documentType, submissionId });
-    setFile(null);
-    setSubmissionId("");
+  const statusConfig = {
+    verified: { icon: CheckCircle2, label: "Verified", color: "text-emerald-600 bg-emerald-50 border-emerald-100" },
+    processing: { icon: Clock, label: "Processing", color: "text-sky-600 bg-sky-50 border-sky-100" },
+    pending: { icon: Clock, label: "Pending", color: "text-gray-500 bg-gray-50 border-gray-100" },
+    rejected: { icon: AlertCircle, label: "Rejected", color: "text-red-600 bg-red-50 border-red-100" },
   };
 
   return (
-    <div className="mx-auto max-w-2xl space-y-6">
-      <h1 className="text-2xl font-bold">Document Upload</h1>
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-[22px] font-semibold tracking-tight text-gray-900">Documents</h1>
+          <p className="mt-1 text-[13px] text-gray-400">{documents.length} documents uploaded</p>
+        </div>
+        <Button className="h-9 rounded-lg bg-gray-900 hover:bg-gray-800 text-white text-[12px] font-medium px-4 flex items-center gap-1.5">
+          <Upload className="h-3.5 w-3.5" /> Upload
+        </Button>
+      </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Upload Document</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {/* Drag and Drop Area */}
-          <div
-            className={`flex flex-col items-center justify-center rounded-lg border-2 border-dashed p-8 transition-colors ${
-              dragActive
-                ? "border-gold-500 bg-gold-50"
-                : "border-gray-300 hover:border-gray-400"
-            }`}
-            onDragEnter={handleDrag}
-            onDragLeave={handleDrag}
-            onDragOver={handleDrag}
-            onDrop={handleDrop}
-          >
-            {file ? (
-              <div className="text-center">
-                <p className="font-medium">{file.name}</p>
-                <p className="text-sm text-muted-foreground">
-                  {(file.size / 1024 / 1024).toFixed(2)} MB
-                </p>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="mt-2"
-                  onClick={() => setFile(null)}
-                >
-                  Remove
-                </Button>
+      <div className="space-y-2.5">
+        {documents.map((doc) => {
+          const config = statusConfig[doc.status];
+          const StatusIcon = config.icon;
+          return (
+            <div key={doc.id} className="flex items-center gap-3 rounded-xl border border-black/[0.04] bg-white p-4">
+              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#FAFAF9]">
+                <FileText className="h-4 w-4 text-gray-400" strokeWidth={1.5} />
               </div>
-            ) : (
-              <div className="text-center">
-                <p className="mb-2 text-sm text-muted-foreground">
-                  Drag & drop a file here, or click to browse
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  PNG, JPEG, WebP, or PDF (max 10MB)
-                </p>
-                <Input
-                  type="file"
-                  accept=".png,.jpg,.jpeg,.webp,.pdf"
-                  onChange={handleFileInput}
-                  className="mt-3 w-auto"
-                />
+              <div className="flex-1 min-w-0">
+                <p className="text-[13px] font-medium text-gray-900 truncate">{doc.name}</p>
+                <p className="text-[11px] text-gray-400">{doc.type} — {doc.uploadedAt}</p>
               </div>
-            )}
-          </div>
-
-          {validationError && (
-            <p className="text-sm text-red-600">{validationError}</p>
-          )}
-
-          {/* Document Type */}
-          <div>
-            <Label htmlFor="doc-type">Document Type</Label>
-            <select
-              id="doc-type"
-              className="w-full rounded border px-3 py-2 text-sm"
-              value={documentType}
-              onChange={(e) => setDocumentType(e.target.value)}
-            >
-              <option value="grade_slip">Grade Slip</option>
-              <option value="enrollment_form">Enrollment Form</option>
-              <option value="certificate">Certificate</option>
-              <option value="transcript">Transcript</option>
-              <option value="id_document">ID Document</option>
-              <option value="report">Report</option>
-              <option value="custom">Custom</option>
-            </select>
-          </div>
-
-          {/* Submission ID */}
-          <div>
-            <Label htmlFor="submission-id">Submission ID</Label>
-            <Input
-              id="submission-id"
-              value={submissionId}
-              onChange={(e) => setSubmissionId(e.target.value)}
-              placeholder="Enter your submission ID"
-            />
-          </div>
-
-          {uploadDocument.error && (
-            <p className="text-sm text-red-600">Upload failed. Please try again.</p>
-          )}
-
-          {uploadDocument.isSuccess && (
-            <p className="text-sm text-green-600">Document uploaded successfully!</p>
-          )}
-
-          <Button
-            className="w-full"
-            onClick={handleUpload}
-            disabled={!file || !submissionId || uploadDocument.isPending}
-          >
-            {uploadDocument.isPending ? "Uploading..." : "Upload Document"}
-          </Button>
-        </CardContent>
-      </Card>
+              <div className={`flex items-center gap-1 rounded-md border px-2 py-0.5 ${config.color}`}>
+                <StatusIcon className="h-3 w-3" />
+                <span className="text-[10px] font-medium">{config.label}</span>
+              </div>
+              {doc.confidence && (
+                <span className="hidden md:block text-[10px] text-gray-400">{Math.round(doc.confidence * 100)}% confidence</span>
+              )}
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }

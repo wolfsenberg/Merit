@@ -6,7 +6,7 @@ import { getUser } from "@/lib/auth";
 import { cn } from "@/lib/utils";
 import {
   LayoutGrid, FileText, ShieldCheck, BarChart3, Bell,
-  Search, Upload, Wallet, Users, Building2, ScrollText, Zap, Receipt, PiggyBank,
+  Search, Wallet, Users, Building2, ScrollText, Zap, Receipt, PiggyBank,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
@@ -26,7 +26,6 @@ const recipientNav: NavItem[] = [
   { label: "Transactions", href: "/transactions", icon: Receipt },
   { label: "Savings", href: "/savings", icon: PiggyBank },
   { label: "Wallet", href: "/wallet", icon: Wallet },
-  { label: "Documents", href: "/documents", icon: Upload },
   { label: "Alerts", href: "/notifications", icon: Bell },
 ];
 

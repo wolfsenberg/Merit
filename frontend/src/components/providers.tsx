@@ -2,6 +2,7 @@
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useState } from "react";
+import { LangProvider } from "@/lib/i18n";
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(
@@ -9,10 +10,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
       new QueryClient({
         defaultOptions: {
           queries: {
-            // Stale-while-revalidate caching strategy
-            staleTime: 30 * 1000, // 30 seconds
-            gcTime: 5 * 60 * 1000, // 5 minutes garbage collection
-            refetchOnWindowFocus: true, // Refetch on window focus for freshness
+            staleTime: 30 * 1000,
+            gcTime: 5 * 60 * 1000,
+            refetchOnWindowFocus: true,
             retry: 1,
           },
         },
@@ -20,6 +20,10 @@ export function Providers({ children }: { children: React.ReactNode }) {
   );
 
   return (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    <QueryClientProvider client={queryClient}>
+      <LangProvider>
+        {children}
+      </LangProvider>
+    </QueryClientProvider>
   );
 }

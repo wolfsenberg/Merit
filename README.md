@@ -85,8 +85,8 @@ AI-assisted conditional funding platform that automates the end-to-end lifecycle
 
 ```bash
 # Clone the repository
-git clone https://github.com/YOUR_USERNAME/merit-platform.git
-cd merit-platform
+git clone https://github.com/wolfsenberg/Merit.git
+cd Merit
 
 # Copy environment variables
 cp .env.example .env

@@ -1,7 +1,5 @@
 #![no_std]
 
-extern crate alloc;
-
 use soroban_sdk::{contract, contractimpl, contracttype, token, Address, Env, String};
 
 /// Storage keys for contract data.
@@ -461,9 +459,10 @@ mod test {
             &3_u32,
         );
 
-        for i in 0..3 {
+        let ids = ["r-0", "r-1", "r-2"];
+        for id_str in ids.iter() {
             let wallet = Address::generate(&env);
-            let id = String::from_str(&env, &alloc::format!("r-{}", i));
+            let id = String::from_str(&env, id_str);
             client.register_recipient(&str(&env, "prog-2"), &id, &wallet);
         }
 
@@ -486,9 +485,10 @@ mod test {
             &2_u32,
         );
 
-        for i in 0..3 {
+        let ids = ["r-0", "r-1", "r-2"];
+        for id_str in ids.iter() {
             let wallet = Address::generate(&env);
-            let id = String::from_str(&env, &alloc::format!("r-{}", i));
+            let id = String::from_str(&env, id_str);
             client.register_recipient(&str(&env, "prog-3"), &id, &wallet);
         }
     }
@@ -670,14 +670,14 @@ mod test {
             &20_u32,
         );
 
-        let count = 7;
-        for i in 0..count {
+        let ids = ["r-0", "r-1", "r-2", "r-3", "r-4", "r-5", "r-6"];
+        for id_str in ids.iter() {
             let wallet = Address::generate(&env);
-            let id = String::from_str(&env, &alloc::format!("r-{}", i));
+            let id = String::from_str(&env, id_str);
             client.register_recipient(&str(&env, "prog-p6"), &id, &wallet);
         }
 
         let program = client.get_program(&str(&env, "prog-p6"));
-        assert_eq!(program.current_recipients, count as u32);
+        assert_eq!(program.current_recipients, 7);
     }
 }

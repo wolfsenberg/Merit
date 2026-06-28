@@ -7,8 +7,9 @@ AI-assisted conditional funding platform that automates the end-to-end lifecycle
 ## Live Demo
 
 - **Frontend**: [https://merit-platform.vercel.app](https://merit-platform.vercel.app) *(deploy with `vercel` CLI)*
-- **Contract Address**: `PLACEHOLDER_CONTRACT_ADDRESS` *(update after Soroban testnet deployment)*
-- **Transaction Hash**: `PLACEHOLDER_TX_HASH` *(update after contract interaction)*
+- **Contract Address**: [`CDGVQGO635OJN3ZYG3VAMFUUHL6BY7W47U4DWOCSGQX2GQRMDJHTQFF7`](https://stellar.expert/explorer/testnet/contract/CDGVQGO635OJN3ZYG3VAMFUUHL6BY7W47U4DWOCSGQX2GQRMDJHTQFF7)
+- **Deploy Transaction**: [`5e9715d7dd5ad1636d8fd17f5c22f2d4b16125063cc8a7d2564dfbbf54ec262f`](https://stellar.expert/explorer/testnet/tx/5e9715d7dd5ad1636d8fd17f5c22f2d4b16125063cc8a7d2564dfbbf54ec262f)
+- **Contract Interaction TX**: [`d46785c4b9c41a94e02d2403c0e11b0d0c3fc2830e58dbeab6409d588c0c82a3`](https://stellar.expert/explorer/testnet/tx/d46785c4b9c41a94e02d2403c0e11b0d0c3fc2830e58dbeab6409d588c0c82a3)
 - **Demo Video**: [Link to demo video] *(record 1-2 min walkthrough)*
 
 ## Features

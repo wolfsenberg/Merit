@@ -1,11 +1,6 @@
 /**
- * Auth layout - renders pages without the main navigation sidebar.
- * Used for login and register pages.
+ * Auth layout — no sidebar, just a clean full-page layout for login/register.
  */
-export default function AuthLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }

@@ -1,14 +1,26 @@
-export default function Home() {
+"use client";
+
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { isAuthenticated } from "@/lib/auth";
+
+/**
+ * Root page — redirects to login or dashboard based on auth state.
+ */
+export default function HomePage() {
+  const router = useRouter();
+
+  useEffect(() => {
+    if (isAuthenticated()) {
+      router.replace("/dashboard");
+    } else {
+      router.replace("/login");
+    }
+  }, [router]);
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-4 md:p-8">
-      <div className="text-center">
-        <h1 className="text-3xl font-bold text-gold-600 md:text-5xl">
-          Merit Platform
-        </h1>
-        <p className="mt-4 text-muted-foreground">
-          AI-assisted conditional funding platform
-        </p>
-      </div>
-    </main>
+    <div className="flex h-screen items-center justify-center bg-gradient-to-br from-amber-50 to-white">
+      <div className="h-10 w-10 animate-spin rounded-full border-4 border-amber-500 border-t-transparent" />
+    </div>
   );
 }

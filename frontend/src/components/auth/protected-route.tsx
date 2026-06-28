@@ -9,14 +9,9 @@ interface ProtectedRouteProps {
   allowedRoles?: AuthUser["role"][];
 }
 
-/**
- * Protected route wrapper that checks authentication and optional role access.
- * Redirects to /login if not authenticated.
- * Redirects to /dashboard if authenticated but role not allowed.
- */
 export function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) {
   const router = useRouter();
-  const [isChecking, setIsChecking] = useState(true);
+  const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
     if (!isAuthenticated()) {
@@ -32,13 +27,16 @@ export function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) 
       }
     }
 
-    setIsChecking(false);
+    setIsReady(true);
   }, [router, allowedRoles]);
 
-  if (isChecking) {
+  if (!isReady) {
     return (
-      <div className="flex h-full items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-gold-500 border-t-transparent" />
+      <div className="flex h-screen items-center justify-center bg-gray-50/50">
+        <div className="flex flex-col items-center gap-3">
+          <div className="h-8 w-8 animate-spin rounded-full border-3 border-amber-500 border-t-transparent" />
+          <p className="text-sm text-gray-400">Loading...</p>
+        </div>
       </div>
     );
   }

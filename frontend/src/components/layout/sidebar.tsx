@@ -2,121 +2,44 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  LayoutDashboard,
-  FileText,
-  Users,
-  Wallet,
-  Bell,
-  Shield,
-  ClipboardCheck,
-  Building2,
-  Upload,
-  BarChart3,
-} from "lucide-react";
+import { getUser } from "@/lib/auth";
 import { cn } from "@/lib/utils";
 
 export interface NavItem {
   label: string;
   href: string;
-  icon: React.ReactNode;
+  icon: string;
 }
 
 const orgAdminNav: NavItem[] = [
-  {
-    label: "Dashboard",
-    href: "/dashboard",
-    icon: <LayoutDashboard className="h-5 w-5" />,
-  },
-  {
-    label: "Programs",
-    href: "/programs",
-    icon: <FileText className="h-5 w-5" />,
-  },
-  {
-    label: "Verifications",
-    href: "/verifications",
-    icon: <ClipboardCheck className="h-5 w-5" />,
-  },
-  {
-    label: "Analytics",
-    href: "/analytics",
-    icon: <BarChart3 className="h-5 w-5" />,
-  },
-  {
-    label: "Notifications",
-    href: "/notifications",
-    icon: <Bell className="h-5 w-5" />,
-  },
+  { label: "Dashboard", href: "/dashboard", icon: "📊" },
+  { label: "Programs", href: "/programs", icon: "📋" },
+  { label: "Verifications", href: "/verifications", icon: "✅" },
+  { label: "Analytics", href: "/analytics", icon: "📈" },
+  { label: "Notifications", href: "/notifications", icon: "🔔" },
 ];
 
 const recipientNav: NavItem[] = [
-  {
-    label: "Dashboard",
-    href: "/dashboard",
-    icon: <LayoutDashboard className="h-5 w-5" />,
-  },
-  {
-    label: "Programs",
-    href: "/programs",
-    icon: <FileText className="h-5 w-5" />,
-  },
-  {
-    label: "Documents",
-    href: "/documents",
-    icon: <Upload className="h-5 w-5" />,
-  },
-  {
-    label: "Wallet",
-    href: "/wallet",
-    icon: <Wallet className="h-5 w-5" />,
-  },
-  {
-    label: "Notifications",
-    href: "/notifications",
-    icon: <Bell className="h-5 w-5" />,
-  },
+  { label: "Dashboard", href: "/dashboard", icon: "🏠" },
+  { label: "Programs", href: "/programs/browse", icon: "🔍" },
+  { label: "Documents", href: "/documents", icon: "📄" },
+  { label: "Wallet", href: "/wallet", icon: "💰" },
+  { label: "Notifications", href: "/notifications", icon: "🔔" },
 ];
 
 const adminNav: NavItem[] = [
-  {
-    label: "Dashboard",
-    href: "/admin/dashboard",
-    icon: <LayoutDashboard className="h-5 w-5" />,
-  },
-  {
-    label: "Users",
-    href: "/admin/users",
-    icon: <Users className="h-5 w-5" />,
-  },
-  {
-    label: "Organizations",
-    href: "/admin/organizations",
-    icon: <Building2 className="h-5 w-5" />,
-  },
-  {
-    label: "Audit Logs",
-    href: "/admin/audit-logs",
-    icon: <Shield className="h-5 w-5" />,
-  },
-  {
-    label: "Notifications",
-    href: "/notifications",
-    icon: <Bell className="h-5 w-5" />,
-  },
+  { label: "Dashboard", href: "/admin/dashboard", icon: "⚡" },
+  { label: "Users", href: "/admin/users", icon: "👥" },
+  { label: "Organizations", href: "/admin/organizations", icon: "🏢" },
+  { label: "Audit Logs", href: "/admin/audit-logs", icon: "🛡️" },
+  { label: "Notifications", href: "/notifications", icon: "🔔" },
 ];
 
-/** Returns navigation items based on user role */
 export function getNavItems(role?: string): NavItem[] {
   switch (role) {
-    case "super_admin":
-      return adminNav;
-    case "org_admin":
-      return orgAdminNav;
-    case "recipient":
-      return recipientNav;
-    default:
-      return recipientNav;
+    case "super_admin": return adminNav;
+    case "org_admin": return orgAdminNav;
+    default: return recipientNav;
   }
 }
 
@@ -127,40 +50,32 @@ interface SidebarProps {
 
 export function Sidebar({ isOpen, onClose }: SidebarProps) {
   const pathname = usePathname();
-  // For now, use default nav until auth context is wired up
-  const navItems = getNavItems();
+  const user = getUser();
+  const navItems = getNavItems(user?.role);
 
   return (
     <>
       {/* Mobile overlay */}
       {isOpen && (
-        <div
-          className="fixed inset-0 z-40 bg-black/50 md:hidden"
-          onClick={onClose}
-          aria-hidden="true"
-        />
+        <div className="fixed inset-0 z-40 bg-black/30 backdrop-blur-sm md:hidden" onClick={onClose} />
       )}
 
       {/* Sidebar */}
-      <aside
-        className={cn(
-          "fixed inset-y-0 left-0 z-50 flex w-64 flex-col border-r border-border bg-white transition-transform duration-300 ease-in-out md:static md:translate-x-0",
-          isOpen ? "translate-x-0" : "-translate-x-full"
-        )}
-        role="navigation"
-        aria-label="Main navigation"
-      >
-        {/* Logo area */}
-        <div className="flex h-16 items-center border-b border-border px-6">
-          <Link href="/dashboard" className="flex items-center gap-2" onClick={onClose}>
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gold-500">
+      <aside className={cn(
+        "fixed inset-y-0 left-0 z-50 flex w-64 flex-col bg-white border-r border-gray-100 transition-transform duration-200 ease-out md:static md:translate-x-0",
+        isOpen ? "translate-x-0" : "-translate-x-full"
+      )}>
+        {/* Logo */}
+        <div className="flex h-14 items-center px-5 border-b border-gray-100">
+          <Link href="/dashboard" className="flex items-center gap-2.5" onClick={onClose}>
+            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-amber-500 to-amber-600 shadow-sm shadow-amber-500/20">
               <span className="text-sm font-bold text-white">M</span>
             </div>
-            <span className="text-xl font-bold text-foreground">Merit</span>
+            <span className="text-lg font-bold text-gray-900">Merit</span>
           </Link>
         </div>
 
-        {/* Navigation links */}
+        {/* Navigation */}
         <nav className="flex-1 overflow-y-auto px-3 py-4">
           <ul className="space-y-1">
             {navItems.map((item) => {
@@ -171,16 +86,13 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                     href={item.href}
                     onClick={onClose}
                     className={cn(
-                      "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
+                      "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all",
                       isActive
-                        ? "bg-gold-50 text-gold-700"
-                        : "text-muted-foreground hover:bg-gold-50/50 hover:text-foreground"
+                        ? "bg-amber-50 text-amber-700 shadow-sm"
+                        : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
                     )}
-                    aria-current={isActive ? "page" : undefined}
                   >
-                    <span className={cn(isActive ? "text-gold-600" : "text-muted-foreground")}>
-                      {item.icon}
-                    </span>
+                    <span className="text-base">{item.icon}</span>
                     {item.label}
                   </Link>
                 </li>
@@ -189,11 +101,17 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
           </ul>
         </nav>
 
-        {/* Footer area */}
-        <div className="border-t border-border p-4">
-          <p className="text-xs text-muted-foreground">
-            © {new Date().getFullYear()} Merit Platform
-          </p>
+        {/* User role badge */}
+        <div className="border-t border-gray-100 p-4">
+          <div className="flex items-center gap-2 rounded-xl bg-gray-50 px-3 py-2">
+            <div className="flex h-7 w-7 items-center justify-center rounded-full bg-amber-100 text-xs font-semibold text-amber-700">
+              {user?.full_name?.charAt(0)?.toUpperCase() || "U"}
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="text-xs font-medium text-gray-900 truncate">{user?.full_name || "User"}</p>
+              <p className="text-[10px] text-gray-500 capitalize">{user?.role?.replace("_", " ") || "recipient"}</p>
+            </div>
+          </div>
         </div>
       </aside>
     </>

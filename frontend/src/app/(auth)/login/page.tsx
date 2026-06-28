@@ -8,7 +8,6 @@ import { setTokens, setUser } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -50,7 +49,6 @@ export default function LoginPage() {
       const tokens = await response.json();
       setTokens(tokens);
 
-      // Decode user info from token (basic JWT decode)
       try {
         const payload = JSON.parse(atob(tokens.access_token.split(".")[1]));
         setUser({
@@ -60,77 +58,96 @@ export default function LoginPage() {
           role: payload.role,
           organization_id: payload.organization_id,
         });
-      } catch {
-        // If token decode fails, user will be fetched on next page load
-      }
+      } catch {}
 
       router.push("/dashboard");
     } catch {
-      setApiError("An error occurred. Please try again.");
+      setApiError("Connection error. Please try again.");
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="text-center">
-          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-gold-500">
-            <span className="text-lg font-bold text-white">M</span>
+    <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-amber-50 via-white to-amber-50/30 px-4">
+      {/* Decorative elements */}
+      <div className="pointer-events-none fixed inset-0 overflow-hidden">
+        <div className="absolute -top-40 -right-40 h-80 w-80 rounded-full bg-amber-200/20 blur-3xl" />
+        <div className="absolute -bottom-40 -left-40 h-80 w-80 rounded-full bg-amber-100/30 blur-3xl" />
+      </div>
+
+      <div className="relative w-full max-w-sm space-y-8">
+        {/* Logo and branding */}
+        <div className="text-center">
+          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-500 to-amber-600 shadow-lg shadow-amber-500/25">
+            <span className="text-xl font-bold text-white">M</span>
           </div>
-          <CardTitle className="text-2xl">Sign in to Merit</CardTitle>
-          <CardDescription>Enter your credentials to access your account</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {apiError && (
-              <div className="rounded-md bg-red-50 p-3 text-sm text-red-700" role="alert">
-                {apiError}
-              </div>
-            )}
+          <h1 className="text-2xl font-bold tracking-tight text-gray-900">Welcome back</h1>
+          <p className="mt-1 text-sm text-gray-500">Sign in to your Merit account</p>
+        </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="you@example.com"
-                value={formData.email}
-                onChange={(e) => setFormData((prev) => ({ ...prev, email: e.target.value }))}
-                aria-invalid={!!errors.email}
-                aria-describedby={errors.email ? "email-error" : undefined}
-              />
-              {errors.email && <p id="email-error" className="text-sm text-red-600">{errors.email}</p>}
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="space-y-5">
+          {apiError && (
+            <div className="rounded-xl bg-red-50 border border-red-100 p-3.5 text-sm text-red-700 animate-in fade-in slide-in-from-top-1" role="alert">
+              {apiError}
             </div>
+          )}
 
-            <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                type="password"
-                placeholder="••••••••"
-                value={formData.password}
-                onChange={(e) => setFormData((prev) => ({ ...prev, password: e.target.value }))}
-                aria-invalid={!!errors.password}
-                aria-describedby={errors.password ? "password-error" : undefined}
-              />
-              {errors.password && <p id="password-error" className="text-sm text-red-600">{errors.password}</p>}
+          <div className="space-y-1.5">
+            <Label htmlFor="email" className="text-sm font-medium text-gray-700">Email</Label>
+            <Input
+              id="email"
+              type="email"
+              placeholder="you@example.com"
+              value={formData.email}
+              onChange={(e) => setFormData((prev) => ({ ...prev, email: e.target.value }))}
+              className="h-11 rounded-xl border-gray-200 bg-white/80 backdrop-blur-sm focus:border-amber-400 focus:ring-amber-400/20"
+              aria-invalid={!!errors.email}
+            />
+            {errors.email && <p className="text-xs text-red-500 mt-1">{errors.email}</p>}
+          </div>
+
+          <div className="space-y-1.5">
+            <div className="flex items-center justify-between">
+              <Label htmlFor="password" className="text-sm font-medium text-gray-700">Password</Label>
+              <button type="button" className="text-xs text-amber-600 hover:text-amber-700 font-medium">
+                Forgot password?
+              </button>
             </div>
+            <Input
+              id="password"
+              type="password"
+              placeholder="••••••••"
+              value={formData.password}
+              onChange={(e) => setFormData((prev) => ({ ...prev, password: e.target.value }))}
+              className="h-11 rounded-xl border-gray-200 bg-white/80 backdrop-blur-sm focus:border-amber-400 focus:ring-amber-400/20"
+              aria-invalid={!!errors.password}
+            />
+            {errors.password && <p className="text-xs text-red-500 mt-1">{errors.password}</p>}
+          </div>
 
-            <Button type="submit" className="w-full bg-gold-500 hover:bg-gold-600" disabled={isLoading}>
-              {isLoading ? "Signing in..." : "Sign in"}
-            </Button>
+          <Button
+            type="submit"
+            className="w-full h-11 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-semibold shadow-md shadow-amber-500/20 transition-all hover:shadow-lg hover:shadow-amber-500/30"
+            disabled={isLoading}
+          >
+            {isLoading ? (
+              <span className="flex items-center gap-2">
+                <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                Signing in...
+              </span>
+            ) : "Sign in"}
+          </Button>
+        </form>
 
-            <p className="text-center text-sm text-muted-foreground">
-              Don&apos;t have an account?{" "}
-              <Link href="/register" className="text-gold-600 hover:underline">
-                Register
-              </Link>
-            </p>
-          </form>
-        </CardContent>
-      </Card>
+        <p className="text-center text-sm text-gray-500">
+          Don&apos;t have an account?{" "}
+          <Link href="/register" className="font-semibold text-amber-600 hover:text-amber-700">
+            Create one
+          </Link>
+        </p>
+      </div>
     </div>
   );
 }

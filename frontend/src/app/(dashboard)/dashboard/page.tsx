@@ -1,18 +1,44 @@
 "use client";
 
+import { useState } from "react";
 import { getUser } from "@/lib/auth";
-import { ArrowDownLeft, ArrowUpRight, PiggyBank, Wallet, Receipt, Search, TrendingUp, CheckCircle2, Bell } from "lucide-react";
+import { ArrowDownLeft, ArrowUpRight, PiggyBank, Wallet, Receipt, Search, TrendingUp, CheckCircle2, Bell, RefreshCw } from "lucide-react";
 import Link from "next/link";
+import { useXlmRate, phpToXlm, formatCurrency } from "@/hooks/use-xlm-rate";
 
 export default function DashboardPage() {
   const user = getUser();
+  const [showXlm, setShowXlm] = useState(false);
+  const { rate, loading, lastUpdated } = useXlmRate();
+
+  const balancePhp = 10000;
+  const balanceXlm = phpToXlm(balancePhp, rate);
 
   return (
     <div className="space-y-6">
-      {/* Balance card — GCash style */}
+      {/* Balance card */}
       <div className="rounded-2xl bg-gradient-to-br from-gray-900 to-gray-800 p-5 text-white shadow-xl">
-        <p className="text-[11px] font-medium text-white/50 uppercase tracking-wider">Available Balance</p>
-        <p className="mt-1 text-[32px] font-bold tracking-tight">PHP 10,000<span className="text-[16px] text-white/40 font-normal">.00</span></p>
+        <div className="flex items-center justify-between">
+          <p className="text-[11px] font-medium text-white/50 uppercase tracking-wider">Available Balance</p>
+          <button
+            onClick={() => setShowXlm(!showXlm)}
+            className="flex items-center gap-1 rounded-md bg-white/10 px-2 py-0.5 text-[10px] font-medium text-white/70 hover:bg-white/15 transition-colors"
+          >
+            {showXlm ? "XLM" : "PHP"}
+            <RefreshCw className={`h-2.5 w-2.5 ${loading ? "animate-spin" : ""}`} />
+          </button>
+        </div>
+        {showXlm ? (
+          <div>
+            <p className="mt-1 text-[32px] font-bold tracking-tight">{balanceXlm.toLocaleString(undefined, { maximumFractionDigits: 2 })} <span className="text-[16px] text-white/40 font-normal">XLM</span></p>
+            <p className="text-[11px] text-white/40 mt-0.5">≈ PHP {balancePhp.toLocaleString()} at {rate.toFixed(2)} PHP/XLM</p>
+          </div>
+        ) : (
+          <div>
+            <p className="mt-1 text-[32px] font-bold tracking-tight">PHP {balancePhp.toLocaleString()}<span className="text-[16px] text-white/40 font-normal">.00</span></p>
+            <p className="text-[11px] text-white/40 mt-0.5">≈ {balanceXlm.toLocaleString(undefined, { maximumFractionDigits: 2 })} XLM at {rate.toFixed(2)} PHP/XLM</p>
+          </div>
+        )}
         <div className="mt-4 flex items-center gap-3">
           <Link href="/wallet" className="flex flex-col items-center gap-1">
             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 backdrop-blur-sm">
@@ -106,6 +132,14 @@ function QuickAction({ icon, label, href }: { icon: React.ReactNode; label: stri
 }
 
 function TxRow({ icon, title, sub, amount, date, last }: { icon: React.ReactNode; title: string; sub: string; amount: string; date: string; last?: boolean }) {
+  const [showXlm, setShowXlm] = useState(false);
+  const { rate } = useXlmRate();
+
+  // Parse amount for conversion
+  const numericAmount = parseFloat(amount.replace(/[^0-9.-]/g, "")) || 0;
+  const xlmAmount = phpToXlm(Math.abs(numericAmount), rate);
+  const isPositive = amount.startsWith("+");
+
   return (
     <div className={`flex items-center gap-3 px-4 py-3 ${!last ? "border-b border-black/[0.03]" : ""}`}>
       <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#FAFAF9] shrink-0">{icon}</div>
@@ -113,10 +147,19 @@ function TxRow({ icon, title, sub, amount, date, last }: { icon: React.ReactNode
         <p className="text-[12px] font-medium text-gray-900">{title}</p>
         <p className="text-[10px] text-gray-400">{sub}</p>
       </div>
-      <div className="text-right shrink-0">
-        <p className={`text-[12px] font-semibold ${amount.startsWith("+") ? "text-emerald-600" : "text-gray-700"}`}>{amount}</p>
-        <p className="text-[10px] text-gray-400">{date}</p>
-      </div>
+      <button onClick={() => setShowXlm(!showXlm)} className="text-right shrink-0 hover:opacity-70 transition-opacity">
+        {showXlm ? (
+          <div>
+            <p className={`text-[12px] font-semibold ${isPositive ? "text-emerald-600" : "text-gray-700"}`}>{isPositive ? "+" : "-"} {xlmAmount.toFixed(2)} XLM</p>
+            <p className="text-[9px] text-gray-400">tap for PHP</p>
+          </div>
+        ) : (
+          <div>
+            <p className={`text-[12px] font-semibold ${isPositive ? "text-emerald-600" : "text-gray-700"}`}>{amount}</p>
+            <p className="text-[9px] text-gray-400">{date}</p>
+          </div>
+        )}
+      </button>
     </div>
   );
 }

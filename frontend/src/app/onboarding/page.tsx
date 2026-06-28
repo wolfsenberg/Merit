@@ -16,26 +16,26 @@ const features: Feature[] = [
   {
     icon: Zap,
     title: "No more long queues",
-    description: "Submit requirements digitally. No need to line up at windows, photocopy documents, or wait for manual processing.",
+    description: "Your scholarship organization handles verification. You just accept the funds directly in the app — no windows, no waiting.",
     highlight: "Apply from anywhere, anytime.",
   },
   {
     icon: FileCheck,
-    title: "AI-powered verification",
-    description: "Upload your grades and documents once. Our OCR system reads, validates, and verifies them automatically.",
-    highlight: "Results in minutes, not weeks.",
+    title: "Receive funds instantly",
+    description: "Once verified by your scholarship provider, funds land in your Merit wallet immediately. Like GCash, but for scholars.",
+    highlight: "No more delayed stipends.",
   },
   {
     icon: Shield,
-    title: "Transparent compliance",
-    description: "Know exactly where you stand. Real-time tracking of your eligibility status — no surprises, no guessing games.",
-    highlight: "You see what the admin sees.",
+    title: "Built-in savings goals",
+    description: "Set goals like 'Laptop Fund' or 'Emergency'. Lock your money until you hit the target — discipline made easy.",
+    highlight: "Your money works for you.",
   },
   {
     icon: Banknote,
-    title: "Direct blockchain disbursement",
-    description: "Funds go straight to your Stellar wallet the moment you're verified. No middlemen, no delays, no missing stipends.",
-    highlight: "On-chain. Tamper-proof. Instant.",
+    title: "Cash out anytime",
+    description: "Transfer to GCash, bank account, or keep it in your Merit wallet. Powered by blockchain, but feels like any other app.",
+    highlight: "No crypto knowledge needed.",
   },
 ];
 

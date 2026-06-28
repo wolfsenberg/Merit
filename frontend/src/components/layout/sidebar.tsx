@@ -6,7 +6,7 @@ import { getUser } from "@/lib/auth";
 import { cn } from "@/lib/utils";
 import {
   LayoutGrid, FileText, ShieldCheck, BarChart3, Bell,
-  Search, Upload, Wallet, Users, Building2, ScrollText, Zap, Receipt,
+  Search, Upload, Wallet, Users, Building2, ScrollText, Zap, Receipt, PiggyBank,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
@@ -21,12 +21,13 @@ const orgAdminNav: NavItem[] = [
 ];
 
 const recipientNav: NavItem[] = [
-  { label: "Overview", href: "/dashboard", icon: LayoutGrid },
-  { label: "Explore", href: "/programs/browse", icon: Search },
-  { label: "Documents", href: "/documents", icon: Upload },
+  { label: "Home", href: "/dashboard", icon: LayoutGrid },
+  { label: "Scholarships", href: "/programs/browse", icon: Search },
   { label: "Transactions", href: "/transactions", icon: Receipt },
+  { label: "Savings", href: "/savings", icon: PiggyBank },
   { label: "Wallet", href: "/wallet", icon: Wallet },
-  { label: "Notifications", href: "/notifications", icon: Bell },
+  { label: "Documents", href: "/documents", icon: Upload },
+  { label: "Alerts", href: "/notifications", icon: Bell },
 ];
 
 const adminNav: NavItem[] = [

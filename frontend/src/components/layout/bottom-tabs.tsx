@@ -4,7 +4,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LayoutGrid, Search, PiggyBank, Receipt, Wallet } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useMobilePreview } from "./mobile-preview";
 
 interface TabItem {
   label: string;
@@ -22,17 +21,13 @@ const tabs: TabItem[] = [
 
 export function BottomTabs() {
   const pathname = usePathname();
-  const { isMobilePreview } = useMobilePreview();
 
   return (
-    <nav className={cn(
-      "sticky bottom-0 z-50 flex items-center justify-around border-t border-black/[0.05] bg-white/95 backdrop-blur-md px-2 py-2",
-      isMobilePreview ? "flex" : "flex md:hidden"
-    )}>
+    <nav className="flex items-center justify-around border-t border-black/[0.06] bg-white px-2 py-2.5 shrink-0">
       {tabs.map((tab) => {
         const isActive = pathname === tab.href || pathname.startsWith(tab.href + "/");
         return (
-          <Link key={tab.href} href={tab.href} className={cn("flex flex-col items-center gap-0.5 px-3 py-1 rounded-lg transition-colors", isActive ? "text-merit-gold" : "text-gray-400")}>
+          <Link key={tab.href} href={tab.href} className={cn("flex flex-col items-center gap-0.5 px-3 py-1 transition-colors", isActive ? "text-merit-gold" : "text-gray-400")}>
             {tab.icon}
             <span className="text-[9px] font-medium">{tab.label}</span>
           </Link>

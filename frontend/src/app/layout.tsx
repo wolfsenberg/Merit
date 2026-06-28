@@ -7,8 +7,8 @@ import { MobilePreviewWrapper } from "@/components/layout/mobile-preview";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Merit Platform",
-  description: "AI-assisted conditional funding platform",
+  title: "Merit — Your Scholarship Wallet",
+  description: "Receive, save, and manage your scholarship funds.",
 };
 
 export default function RootLayout({

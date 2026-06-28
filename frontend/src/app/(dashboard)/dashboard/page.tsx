@@ -1,95 +1,132 @@
 "use client";
 
 import { getUser } from "@/lib/auth";
-import { Card, CardContent } from "@/components/ui/card";
+import { ArrowUpRight, ArrowRight, TrendingUp, CheckCircle2, Clock, Banknote } from "lucide-react";
+import Link from "next/link";
 
 export default function DashboardPage() {
   const user = getUser();
   const isAdmin = user?.role === "org_admin" || user?.role === "super_admin";
 
   return (
-    <div className="space-y-6">
-      {/* Welcome banner */}
-      <div className="rounded-2xl bg-gradient-to-r from-[#F4BA45] to-[#E5A830] p-5 md:p-6 text-white shadow-lg shadow-[#F4BA45]/20">
-        <h1 className="text-lg font-bold md:text-xl">
-          Welcome back{user?.full_name ? `, ${user.full_name}` : ""} 👋
+    <div className="space-y-8">
+      {/* Header */}
+      <div>
+        <h1 className="text-[22px] font-semibold tracking-tight text-gray-900">
+          {isAdmin ? "Dashboard" : "Home"}
         </h1>
-        <p className="mt-1 text-white/80 text-sm">
-          {isAdmin ? "Manage your programs and track disbursements" : "Track your applications and funding status"}
+        <p className="mt-1 text-[13px] text-gray-400">
+          {isAdmin ? "Manage programs and track disbursements" : "Track your applications and funding"}
         </p>
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-        <StatCard label={isAdmin ? "Active Programs" : "Applications"} value="3" change="+2 this month" />
-        <StatCard label={isAdmin ? "Recipients" : "Documents"} value="12" change="+5 this week" />
-        <StatCard label={isAdmin ? "Total Funded" : "Received"} value="₱45K" change="on Stellar" accent />
-        <StatCard label={isAdmin ? "Compliance" : "Status"} value={isAdmin ? "87%" : "Eligible"} change={isAdmin ? "↑ 4%" : "✓ Verified"} />
+      {/* Metrics */}
+      <div className="grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-4">
+        <MetricCard
+          label={isAdmin ? "Active Programs" : "Applications"}
+          value="3"
+          trend="+2"
+          icon={<CheckCircle2 className="h-4 w-4" />}
+        />
+        <MetricCard
+          label={isAdmin ? "Total Recipients" : "Documents"}
+          value="12"
+          trend="+5"
+          icon={<TrendingUp className="h-4 w-4" />}
+        />
+        <MetricCard
+          label={isAdmin ? "Disbursed" : "Received"}
+          value="45,000"
+          prefix="PHP"
+          icon={<Banknote className="h-4 w-4" />}
+          highlight
+        />
+        <MetricCard
+          label={isAdmin ? "Compliance" : "Eligibility"}
+          value={isAdmin ? "87%" : "Eligible"}
+          trend={isAdmin ? "+4%" : undefined}
+          icon={<CheckCircle2 className="h-4 w-4" />}
+        />
       </div>
 
       {/* Quick actions */}
-      <div className="space-y-3">
-        <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Quick Actions</h2>
+      <div>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-[13px] font-medium text-gray-400 uppercase tracking-wider">Quick Actions</h2>
+        </div>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
           {isAdmin ? (
             <>
-              <ActionCard emoji="📋" title="Create Program" desc="Set up a new funding program" href="/programs/new" />
-              <ActionCard emoji="📄" title="Review Documents" desc="3 documents pending review" href="/verifications" />
-              <ActionCard emoji="📊" title="View Analytics" desc="Program performance metrics" href="/analytics" />
+              <ActionCard title="Create Program" desc="Set up new funding criteria" href="/programs/new" />
+              <ActionCard title="Review Queue" desc="3 documents awaiting review" href="/verifications" />
+              <ActionCard title="Analytics" desc="View performance metrics" href="/analytics" />
             </>
           ) : (
             <>
-              <ActionCard emoji="🔍" title="Browse Programs" desc="Find programs to apply to" href="/programs/browse" />
-              <ActionCard emoji="📤" title="Upload Document" desc="Submit compliance documents" href="/documents" />
-              <ActionCard emoji="💰" title="My Wallet" desc="View balance & transactions" href="/wallet" />
+              <ActionCard title="Explore Programs" desc="Browse available funding" href="/programs/browse" />
+              <ActionCard title="Upload Document" desc="Submit for verification" href="/documents" />
+              <ActionCard title="Wallet" desc="View balance and history" href="/wallet" />
             </>
           )}
         </div>
       </div>
 
       {/* Activity */}
-      <div className="space-y-3">
-        <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Recent Activity</h2>
-        <Card className="rounded-2xl border-merit-peach/50 shadow-sm">
-          <CardContent className="divide-y divide-merit-peach/30 p-0">
-            <ActivityItem icon="✅" text="Document verified successfully" time="2 min ago" />
-            <ActivityItem icon="💸" text="Funds disbursed — 500 XLM" time="1 hour ago" />
-            <ActivityItem icon="📝" text="New application submitted" time="3 hours ago" />
-            <ActivityItem icon="🔔" text="Eligibility status updated" time="Yesterday" />
-          </CardContent>
-        </Card>
+      <div>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-[13px] font-medium text-gray-400 uppercase tracking-wider">Recent Activity</h2>
+          <Link href="/notifications" className="text-[12px] font-medium text-merit-gold hover:text-gold-600 flex items-center gap-1">
+            View all <ArrowRight className="h-3 w-3" />
+          </Link>
+        </div>
+        <div className="rounded-xl border border-black/[0.04] bg-white overflow-hidden">
+          <ActivityRow icon={<CheckCircle2 className="h-4 w-4 text-emerald-500" />} text="Document verified successfully" time="2m ago" />
+          <ActivityRow icon={<Banknote className="h-4 w-4 text-merit-gold" />} text="Funds disbursed — 500 XLM" time="1h ago" />
+          <ActivityRow icon={<Clock className="h-4 w-4 text-merit-sky" />} text="Application submitted" time="3h ago" />
+          <ActivityRow icon={<CheckCircle2 className="h-4 w-4 text-emerald-500" />} text="Eligibility confirmed" time="Yesterday" last />
+        </div>
       </div>
     </div>
   );
 }
 
-function StatCard({ label, value, change, accent }: { label: string; value: string; change: string; accent?: boolean }) {
+function MetricCard({ label, value, trend, prefix, icon, highlight }: {
+  label: string; value: string; trend?: string; prefix?: string; icon: React.ReactNode; highlight?: boolean;
+}) {
   return (
-    <Card className="rounded-xl border-merit-peach/40 shadow-sm">
-      <CardContent className="p-4">
-        <p className="text-[11px] font-medium text-gray-400 uppercase tracking-wide">{label}</p>
-        <p className={`mt-1 text-xl font-bold ${accent ? "text-merit-gold" : "text-gray-900"}`}>{value}</p>
-        <p className="text-[11px] text-emerald-600 font-medium mt-0.5">{change}</p>
-      </CardContent>
-    </Card>
+    <div className="rounded-xl border border-black/[0.04] bg-white p-4">
+      <div className="flex items-center justify-between">
+        <span className="text-[11px] font-medium text-gray-400 uppercase tracking-wide">{label}</span>
+        <span className="text-gray-300">{icon}</span>
+      </div>
+      <div className="mt-2">
+        <span className={`text-[20px] font-semibold tracking-tight ${highlight ? "text-merit-gold" : "text-gray-900"}`}>
+          {prefix && <span className="text-[13px] font-normal text-gray-400 mr-0.5">{prefix} </span>}
+          {value}
+        </span>
+      </div>
+      {trend && <span className="text-[11px] font-medium text-emerald-500 mt-1 inline-block">{trend}</span>}
+    </div>
   );
 }
 
-function ActionCard({ emoji, title, desc, href }: { emoji: string; title: string; desc: string; href: string }) {
+function ActionCard({ title, desc, href }: { title: string; desc: string; href: string }) {
   return (
-    <a href={href} className="group block rounded-xl border border-merit-peach/50 bg-white p-4 shadow-sm transition-all hover:shadow-md hover:border-merit-gold/40 hover:-translate-y-0.5 active:translate-y-0">
-      <span className="text-2xl">{emoji}</span>
-      <h3 className="mt-2 text-sm font-semibold text-gray-900 group-hover:text-gold-700">{title}</h3>
-      <p className="mt-0.5 text-xs text-gray-500">{desc}</p>
-    </a>
+    <Link href={href} className="group flex items-center justify-between rounded-xl border border-black/[0.04] bg-white p-4 transition-all duration-150 hover:border-merit-gold/30 hover:shadow-sm">
+      <div>
+        <h3 className="text-[14px] font-medium text-gray-900">{title}</h3>
+        <p className="mt-0.5 text-[12px] text-gray-400">{desc}</p>
+      </div>
+      <ArrowUpRight className="h-4 w-4 text-gray-300 transition-all group-hover:text-merit-gold group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+    </Link>
   );
 }
 
-function ActivityItem({ icon, text, time }: { icon: string; text: string; time: string }) {
+function ActivityRow({ icon, text, time, last }: { icon: React.ReactNode; text: string; time: string; last?: boolean }) {
   return (
-    <div className="flex items-center gap-3 px-4 py-3">
-      <span className="text-base">{icon}</span>
-      <p className="flex-1 text-sm text-gray-700 truncate">{text}</p>
+    <div className={`flex items-center gap-3 px-4 py-3 ${!last ? "border-b border-black/[0.03]" : ""}`}>
+      {icon}
+      <p className="flex-1 text-[13px] text-gray-700 truncate">{text}</p>
       <span className="text-[11px] text-gray-400 whitespace-nowrap">{time}</span>
     </div>
   );

@@ -1,115 +1,80 @@
 "use client";
 
 import { useState } from "react";
-import { useApplications, useVerifyDocument } from "@/hooks/use-api";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { CheckCircle2, XCircle, Clock, User, FileText, ExternalLink } from "lucide-react";
+
+interface VerificationRequest {
+  id: string;
+  studentName: string;
+  email: string;
+  scholarship: string;
+  submittedAt: string;
+  documents: string[];
+  status: "pending" | "approved" | "rejected";
+}
+
+const requests: VerificationRequest[] = [
+  { id: "v1", studentName: "Maria Santos", email: "maria.santos@up.edu.ph", scholarship: "DOST-SEI Merit", submittedAt: "Jun 28, 2026", documents: ["Grade slip", "Enrollment cert", "Valid ID"], status: "pending" },
+  { id: "v2", studentName: "Juan Reyes", email: "j.reyes@ust.edu.ph", scholarship: "DOST-SEI Merit", submittedAt: "Jun 27, 2026", documents: ["Grade slip", "Enrollment cert"], status: "pending" },
+  { id: "v3", studentName: "Ana Cruz", email: "ana.cruz@admu.edu.ph", scholarship: "CHED Tulong Dunong", submittedAt: "Jun 26, 2026", documents: ["Grade slip", "Income cert", "Enrollment cert"], status: "pending" },
+];
 
 export default function VerificationsPage() {
-  const [selectedDocId, setSelectedDocId] = useState<string | null>(null);
-  const [notes, setNotes] = useState("");
+  const [items, setItems] = useState(requests);
 
-  const { data, isLoading } = useApplications({ status: "pending_review" });
-  const verifyDocument = useVerifyDocument();
-
-  const handleVerify = async (documentId: string, approved: boolean) => {
-    await verifyDocument.mutateAsync({ documentId, approved, notes: notes || undefined });
-    setSelectedDocId(null);
-    setNotes("");
+  const handleApprove = (id: string) => {
+    setItems(prev => prev.map(r => r.id === id ? { ...r, status: "approved" as const } : r));
   };
+
+  const handleReject = (id: string) => {
+    setItems(prev => prev.map(r => r.id === id ? { ...r, status: "rejected" as const } : r));
+  };
+
+  const pending = items.filter(r => r.status === "pending");
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Document Verifications</h1>
-        <p className="text-sm text-muted-foreground">
-          Review flagged documents requiring manual verification
-        </p>
+      <div>
+        <h1 className="text-[22px] font-semibold tracking-tight text-gray-900">Verification Queue</h1>
+        <p className="mt-1 text-[13px] text-gray-400">{pending.length} scholars awaiting document verification</p>
       </div>
 
-      {isLoading && (
-        <div className="flex justify-center py-8">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-gold-500 border-t-transparent" />
-        </div>
-      )}
-
-      {data && data.items.length === 0 && (
-        <Card>
-          <CardContent className="py-8 text-center text-muted-foreground">
-            No documents pending review. All caught up!
-          </CardContent>
-        </Card>
-      )}
-
-      <div className="space-y-4">
-        {data?.items.map((application) => (
-          <Card key={application.id}>
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-base">
-                  Application #{application.id.slice(0, 8)}
-                </CardTitle>
-                <span className="rounded-full bg-yellow-100 px-2 py-1 text-xs font-medium text-yellow-700">
-                  {application.status}
-                </span>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <div className="text-sm text-muted-foreground">
-                <p>Program: {application.program_id.slice(0, 8)}...</p>
-                <p>Submitted: {new Date(application.submitted_at).toLocaleDateString()}</p>
-              </div>
-
-              {selectedDocId === application.id ? (
-                <div className="space-y-3 rounded border p-3">
-                  <div>
-                    <Label htmlFor={`notes-${application.id}`}>Review Notes</Label>
-                    <Input
-                      id={`notes-${application.id}`}
-                      value={notes}
-                      onChange={(e) => setNotes(e.target.value)}
-                      placeholder="Add notes about your decision..."
-                    />
-                  </div>
-                  <div className="flex gap-2">
-                    <Button
-                      size="sm"
-                      onClick={() => handleVerify(application.id, true)}
-                      disabled={verifyDocument.isPending}
-                    >
-                      Approve
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => handleVerify(application.id, false)}
-                      disabled={verifyDocument.isPending}
-                      className="text-red-600 hover:text-red-700"
-                    >
-                      Reject
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => { setSelectedDocId(null); setNotes(""); }}
-                    >
-                      Cancel
-                    </Button>
-                  </div>
+      <div className="space-y-3">
+        {items.map(req => (
+          <div key={req.id} className="rounded-xl border border-black/[0.04] bg-white p-4">
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#FAFAF9] text-[11px] font-semibold text-gray-500">
+                  {req.studentName.split(" ").map(n => n[0]).join("")}
                 </div>
-              ) : (
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => setSelectedDocId(application.id)}
-                >
-                  Review Document
-                </Button>
-              )}
-            </CardContent>
-          </Card>
+                <div>
+                  <p className="text-[13px] font-medium text-gray-900">{req.studentName}</p>
+                  <p className="text-[11px] text-gray-400">{req.email} — {req.scholarship}</p>
+                </div>
+              </div>
+              {req.status === "approved" && <span className="flex items-center gap-1 text-[10px] font-medium text-emerald-600"><CheckCircle2 className="h-3 w-3" /> Approved</span>}
+              {req.status === "rejected" && <span className="flex items-center gap-1 text-[10px] font-medium text-red-500"><XCircle className="h-3 w-3" /> Rejected</span>}
+            </div>
+
+            <div className="mt-3 flex flex-wrap gap-2">
+              {req.documents.map(doc => (
+                <span key={doc} className="flex items-center gap-1 rounded-md bg-[#FAFAF9] border border-black/[0.04] px-2 py-1 text-[10px] text-gray-600">
+                  <FileText className="h-3 w-3 text-gray-400" /> {doc}
+                </span>
+              ))}
+            </div>
+
+            {req.status === "pending" && (
+              <div className="mt-3 flex items-center gap-2">
+                <button onClick={() => handleApprove(req.id)} className="flex items-center gap-1.5 rounded-lg bg-emerald-50 border border-emerald-100 px-3 py-2 text-[11px] font-medium text-emerald-700 hover:bg-emerald-100 transition-colors">
+                  <CheckCircle2 className="h-3.5 w-3.5" /> Approve & Disburse
+                </button>
+                <button onClick={() => handleReject(req.id)} className="flex items-center gap-1.5 rounded-lg bg-red-50 border border-red-100 px-3 py-2 text-[11px] font-medium text-red-600 hover:bg-red-100 transition-colors">
+                  <XCircle className="h-3.5 w-3.5" /> Reject
+                </button>
+              </div>
+            )}
+          </div>
         ))}
       </div>
     </div>

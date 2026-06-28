@@ -84,6 +84,22 @@ export default function LoginPage() {
     } catch { setApiError("Connection error. Make sure the backend is running."); } finally { setIsDemoLoading(false); }
   };
 
+  const handleAdminDemo = async () => {
+    if (!walletConnected) { setApiError("Please connect your Freighter wallet first."); return; }
+    setIsDemoLoading(true); setApiError(null);
+    const adminEmail = "admin@merit.app";
+    const adminPassword = "admin12345";
+    try {
+      await fetch("/api/v1/auth/register", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: adminEmail, password: adminPassword, full_name: "DOST Admin", role: "org_admin", organization_id: "00000000-0000-0000-0000-000000000001" }) });
+      const response = await fetch("/api/v1/auth/login", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: adminEmail, password: adminPassword }) });
+      if (!response.ok) { setApiError("Admin demo temporarily unavailable."); return; }
+      const tokens = await response.json();
+      setTokens(tokens);
+      setUser({ id: "admin-demo", email: adminEmail, full_name: "DOST Admin", role: "org_admin", organization_id: "00000000-0000-0000-0000-000000000001" });
+      router.push("/dashboard");
+    } catch { setApiError("Connection error. Make sure the backend is running."); } finally { setIsDemoLoading(false); }
+  };
+
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-[#FAFAF9] px-4">
       <div className="w-full max-w-[360px] space-y-8">
@@ -181,13 +197,21 @@ export default function LoginPage() {
               <div className="relative flex justify-center"><span className="bg-white px-3 text-[11px] text-gray-400">or</span></div>
             </div>
 
-            {/* Demo */}
-            <Button type="button" onClick={handleDemo} disabled={isDemoLoading || !walletConnected} variant="ghost"
-              className="w-full h-10 rounded-lg bg-merit-gold/10 hover:bg-merit-gold/20 text-gray-900 text-[13px] font-medium border border-merit-gold/20 transition-all">
-              {isDemoLoading ? "Loading demo..." : (
-                <span className="flex items-center gap-2"><Play className="h-3.5 w-3.5 text-merit-gold" fill="currentColor" />Try Demo</span>
-              )}
-            </Button>
+            {/* Demo buttons */}
+            <div className="grid grid-cols-2 gap-2">
+              <Button type="button" onClick={handleDemo} disabled={isDemoLoading || !walletConnected} variant="ghost"
+                className="h-10 rounded-lg bg-merit-gold/10 hover:bg-merit-gold/20 text-gray-900 text-[12px] font-medium border border-merit-gold/20 transition-all">
+                {isDemoLoading ? "Loading..." : (
+                  <span className="flex items-center gap-1.5"><Play className="h-3 w-3 text-merit-gold" fill="currentColor" />Student Demo</span>
+                )}
+              </Button>
+              <Button type="button" onClick={handleAdminDemo} disabled={isDemoLoading || !walletConnected} variant="ghost"
+                className="h-10 rounded-lg bg-gray-900/5 hover:bg-gray-900/10 text-gray-900 text-[12px] font-medium border border-black/[0.06] transition-all">
+                {isDemoLoading ? "Loading..." : (
+                  <span className="flex items-center gap-1.5"><Play className="h-3 w-3 text-gray-600" fill="currentColor" />Admin Demo</span>
+                )}
+              </Button>
+            </div>
           </div>
         </div>
 

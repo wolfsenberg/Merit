@@ -45,10 +45,8 @@ export function Header({ onMenuToggle }: HeaderProps) {
           <img src="/logo.svg" alt="Merit" className="h-6 w-6" />
           <span className="text-[15px] font-semibold text-gray-900">Merit</span>
         </Link>
-
-        {/* Info icon */}
-        <button onClick={() => { setShowInfo(true); setInfoSlide(0); }} className="flex h-6 w-6 items-center justify-center rounded-full text-gray-400 hover:text-merit-gold hover:bg-merit-gold/10 transition-colors ml-1.5" aria-label="About Merit">
-          <Info className="h-3.5 w-3.5" strokeWidth={2} />
+        <button onClick={() => { setShowInfo(true); setInfoSlide(0); }} className="ml-1 flex h-5 w-5 items-center justify-center rounded-full border border-black/[0.08] text-gray-400 hover:text-merit-gold hover:border-merit-gold/30 transition-colors" aria-label="About Merit">
+          <Info className="h-3 w-3" strokeWidth={2} />
         </button>
 
         <div className="flex-1" />

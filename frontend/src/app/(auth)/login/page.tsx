@@ -8,6 +8,7 @@ import { setTokens, setUser } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Play } from "lucide-react";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -15,6 +16,7 @@ export default function LoginPage() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [apiError, setApiError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isDemoLoading, setIsDemoLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,6 +32,44 @@ export default function LoginPage() {
       try { const payload = JSON.parse(atob(tokens.access_token.split(".")[1])); setUser({ id: payload.sub, email: formData.email, full_name: payload.full_name || "", role: payload.role, organization_id: payload.organization_id }); } catch {}
       router.push("/dashboard");
     } catch { setApiError("Connection error. Please try again."); } finally { setIsLoading(false); }
+  };
+
+  const handleDemo = async () => {
+    setIsDemoLoading(true);
+    setApiError(null);
+
+    const demoEmail = "demo@merit.app";
+    const demoPassword = "demo12345";
+
+    try {
+      // Try to register the demo user (ignore if already exists)
+      await fetch("/api/v1/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: demoEmail, password: demoPassword, full_name: "Demo User", role: "recipient" }),
+      });
+
+      // Login as demo user
+      const response = await fetch("/api/v1/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: demoEmail, password: demoPassword }),
+      });
+
+      if (!response.ok) {
+        setApiError("Demo is temporarily unavailable. Try again.");
+        return;
+      }
+
+      const tokens = await response.json();
+      setTokens(tokens);
+      setUser({ id: "demo-user", email: demoEmail, full_name: "Demo User", role: "recipient" });
+      router.push("/dashboard");
+    } catch {
+      setApiError("Connection error. Make sure the backend is running.");
+    } finally {
+      setIsDemoLoading(false);
+    }
   };
 
   return (
@@ -82,6 +122,33 @@ export default function LoginPage() {
               ) : "Sign in"}
             </Button>
           </form>
+
+          {/* Divider */}
+          <div className="relative my-5">
+            <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-black/[0.06]" /></div>
+            <div className="relative flex justify-center"><span className="bg-white px-3 text-[11px] text-gray-400">or</span></div>
+          </div>
+
+          {/* Demo button */}
+          <Button
+            type="button"
+            onClick={handleDemo}
+            disabled={isDemoLoading}
+            className="w-full h-10 rounded-lg bg-merit-gold/10 hover:bg-merit-gold/20 text-gray-900 text-[13px] font-medium border border-merit-gold/20 transition-all"
+            variant="ghost"
+          >
+            {isDemoLoading ? (
+              <span className="flex items-center gap-2">
+                <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-merit-gold/30 border-t-merit-gold" />
+                Loading demo...
+              </span>
+            ) : (
+              <span className="flex items-center gap-2">
+                <Play className="h-3.5 w-3.5 text-merit-gold" fill="currentColor" />
+                Try Demo
+              </span>
+            )}
+          </Button>
         </div>
 
         <p className="text-center text-[13px] text-gray-400">

@@ -5,9 +5,11 @@ import { getUser } from "@/lib/auth";
 import { ArrowDownLeft, ArrowUpRight, PiggyBank, Wallet, Receipt, Search, TrendingUp, CheckCircle2, Bell, RefreshCw } from "lucide-react";
 import Link from "next/link";
 import { useXlmRate, phpToXlm, formatCurrency } from "@/hooks/use-xlm-rate";
+import { useLang } from "@/lib/i18n";
 
 export default function DashboardPage() {
   const user = getUser();
+  const { text } = useLang();
   const [showXlm, setShowXlm] = useState(false);
   const { rate, loading, lastUpdated } = useXlmRate();
 
@@ -19,7 +21,7 @@ export default function DashboardPage() {
       {/* Balance card */}
       <div className="rounded-2xl bg-gradient-to-br from-gray-900 to-gray-800 p-5 text-white shadow-xl">
         <div className="flex items-center justify-between">
-          <p className="text-[11px] font-medium text-white/50 uppercase tracking-wider">Available Balance</p>
+          <p className="text-[11px] font-medium text-white/50 uppercase tracking-wider">{text("dash.balance")}</p>
           <button
             onClick={() => setShowXlm(!showXlm)}
             className="flex items-center gap-1 rounded-md bg-white/10 px-2 py-0.5 text-[10px] font-medium text-white/70 hover:bg-white/15 transition-colors"
@@ -44,19 +46,19 @@ export default function DashboardPage() {
             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 backdrop-blur-sm">
               <ArrowDownLeft className="h-4 w-4 text-emerald-400" strokeWidth={2} />
             </div>
-            <span className="text-[10px] text-white/60">Receive</span>
+            <span className="text-[10px] text-white/60">{text("dash.receive")}</span>
           </Link>
           <Link href="/wallet/cashout" className="flex flex-col items-center gap-1">
             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 backdrop-blur-sm">
               <ArrowUpRight className="h-4 w-4 text-white/80" strokeWidth={2} />
             </div>
-            <span className="text-[10px] text-white/60">Cash Out</span>
+            <span className="text-[10px] text-white/60">{text("dash.cashout")}</span>
           </Link>
           <Link href="/savings" className="flex flex-col items-center gap-1">
             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 backdrop-blur-sm">
               <PiggyBank className="h-4 w-4 text-merit-gold" strokeWidth={2} />
             </div>
-            <span className="text-[10px] text-white/60">Save</span>
+            <span className="text-[10px] text-white/60">{text("dash.save")}</span>
           </Link>
         </div>
       </div>
@@ -88,7 +90,7 @@ export default function DashboardPage() {
 
       {/* Active scholarship */}
       <div>
-        <h2 className="text-[12px] font-medium text-gray-400 uppercase tracking-wider mb-3">Active Scholarship</h2>
+        <h2 className="text-[12px] font-medium text-gray-400 uppercase tracking-wider mb-3">{text("dash.active_scholarship")}</h2>
         <div className="rounded-xl border border-black/[0.04] bg-white p-4">
           <div className="flex items-center justify-between">
             <div>
@@ -109,8 +111,8 @@ export default function DashboardPage() {
       {/* Recent */}
       <div>
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-[12px] font-medium text-gray-400 uppercase tracking-wider">Recent</h2>
-          <Link href="/transactions" className="text-[11px] font-medium text-merit-gold">See all</Link>
+          <h2 className="text-[12px] font-medium text-gray-400 uppercase tracking-wider">{text("dash.recent")}</h2>
+          <Link href="/transactions" className="text-[11px] font-medium text-merit-gold">{text("dash.see_all")}</Link>
         </div>
         <div className="rounded-xl border border-black/[0.04] bg-white overflow-hidden">
           <TxRow icon={<ArrowDownLeft className="h-4 w-4 text-emerald-500" />} title="Scholarship Received" sub="DOST-SEI Fund" amount="+ PHP 10,000" date="Jun 25" />

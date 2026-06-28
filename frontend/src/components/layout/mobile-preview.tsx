@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, createContext, useContext, useEffect } from "react";
+import { useState, createContext, useContext, useEffect, useRef } from "react";
 import { Monitor, Smartphone, Languages } from "lucide-react";
 
 interface MobilePreviewContextType {
@@ -50,7 +50,7 @@ export function MobilePreviewWrapper({ children }: { children: React.ReactNode }
             <><Smartphone className="h-3.5 w-3.5" /> Mobile View</>
           )}
         </button>
-        <LangToggleButton />
+        <LangDropdown />
       </div>
 
       {isMobilePreview ? (
@@ -66,32 +66,59 @@ export function MobilePreviewWrapper({ children }: { children: React.ReactNode }
   );
 }
 
-// Self-contained lang toggle that reads/writes localStorage directly
-// (doesn't depend on LangProvider context order)
-function LangToggleButton() {
+function LangDropdown() {
   const [lang, setLang] = useState<"en" | "tl">("en");
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const stored = localStorage.getItem("merit_lang");
     if (stored === "tl") setLang("tl");
   }, []);
 
-  const handleToggle = () => {
-    const next = lang === "en" ? "tl" : "en";
-    setLang(next);
-    localStorage.setItem("merit_lang", next);
-    // Force re-render across app
-    window.dispatchEvent(new Event("merit-lang-change"));
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const handleSelect = (selected: "en" | "tl") => {
+    setLang(selected);
+    localStorage.setItem("merit_lang", selected);
+    setOpen(false);
     window.location.reload();
   };
 
+  const label = lang === "en" ? "English" : "Tagalog";
+
   return (
-    <button
-      onClick={handleToggle}
-      className="flex items-center gap-2 rounded-full bg-merit-gold px-4 py-2.5 text-[12px] font-medium text-white shadow-xl hover:bg-gold-500 transition-all hover:scale-105"
-    >
-      <Languages className="h-3.5 w-3.5" />
-      {lang === "en" ? "Taglish" : "English"}
-    </button>
+    <div className="relative" ref={ref}>
+      <button
+        onClick={() => setOpen(!open)}
+        className="flex items-center gap-2 rounded-full bg-merit-gold px-4 py-2.5 text-[12px] font-medium text-white shadow-xl hover:bg-gold-500 transition-all hover:scale-105"
+      >
+        <Languages className="h-3.5 w-3.5" />
+        Language: {label}
+      </button>
+
+      {open && (
+        <div className="absolute bottom-full mb-2 right-0 w-[160px] rounded-xl bg-white border border-black/[0.06] shadow-xl overflow-hidden animate-in">
+          <button
+            onClick={() => handleSelect("en")}
+            className={`w-full text-left px-4 py-3 text-[13px] font-medium transition-colors ${lang === "en" ? "bg-merit-gold/10 text-merit-gold" : "text-gray-700 hover:bg-gray-50"}`}
+          >
+            English
+          </button>
+          <button
+            onClick={() => handleSelect("tl")}
+            className={`w-full text-left px-4 py-3 text-[13px] font-medium border-t border-black/[0.04] transition-colors ${lang === "tl" ? "bg-merit-gold/10 text-merit-gold" : "text-gray-700 hover:bg-gray-50"}`}
+          >
+            Tagalog
+          </button>
+        </div>
+      )}
+    </div>
   );
 }

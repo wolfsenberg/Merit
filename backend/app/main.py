@@ -16,9 +16,12 @@ settings = get_settings()
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Application lifespan: startup and shutdown events."""
-    # Startup - create tables for dev mode (SQLite)
-    from app.core.database import init_db
-    await init_db()
+    # Startup - try to create tables (may fail on first deploy, that's OK)
+    try:
+        from app.core.database import init_db
+        await init_db()
+    except Exception as e:
+        print(f"Warning: init_db failed (likely first deploy): {e}")
     yield
     # Shutdown
     await close_db()

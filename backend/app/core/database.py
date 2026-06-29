@@ -7,8 +7,15 @@ from app.core.config import get_settings
 
 settings = get_settings()
 
+# Auto-fix database URL for async compatibility
+_db_url = settings.database_url
+if _db_url.startswith("postgres://"):
+    _db_url = _db_url.replace("postgres://", "postgresql+asyncpg://", 1)
+elif _db_url.startswith("postgresql://"):
+    _db_url = _db_url.replace("postgresql://", "postgresql+asyncpg://", 1)
+
 # SQLite doesn't support connection pooling options
-_is_sqlite = settings.database_url.startswith("sqlite")
+_is_sqlite = _db_url.startswith("sqlite")
 
 _engine_kwargs = {
     "echo": settings.debug,
@@ -22,7 +29,7 @@ if not _is_sqlite:
         "pool_recycle": settings.db_pool_recycle,
     })
 
-engine = create_async_engine(settings.database_url, **_engine_kwargs)
+engine = create_async_engine(_db_url, **_engine_kwargs)
 
 async_session_factory = async_sessionmaker(
     engine,

@@ -4,13 +4,27 @@ AI-assisted conditional funding platform that automates the end-to-end lifecycle
 
 ![Merit Platform](https://img.shields.io/badge/status-active-brightgreen) ![Tests](https://img.shields.io/badge/tests-480%2B%20passing-green) ![License](https://img.shields.io/badge/license-MIT-blue)
 
-## Live Demo
+## Live Demo & Blockchain
 
-- **Frontend**: [https://merit-platform.vercel.app](https://merit-platform.vercel.app) *(deploy with `vercel` CLI)*
-- **Contract Address**: [`CDGVQGO635OJN3ZYG3VAMFUUHL6BY7W47U4DWOCSGQX2GQRMDJHTQFF7`](https://stellar.expert/explorer/testnet/contract/CDGVQGO635OJN3ZYG3VAMFUUHL6BY7W47U4DWOCSGQX2GQRMDJHTQFF7)
-- **Deploy Transaction**: [`5e9715d7dd5ad1636d8fd17f5c22f2d4b16125063cc8a7d2564dfbbf54ec262f`](https://stellar.expert/explorer/testnet/tx/5e9715d7dd5ad1636d8fd17f5c22f2d4b16125063cc8a7d2564dfbbf54ec262f)
-- **Contract Interaction TX**: [`d46785c4b9c41a94e02d2403c0e11b0d0c3fc2830e58dbeab6409d588c0c82a3`](https://stellar.expert/explorer/testnet/tx/d46785c4b9c41a94e02d2403c0e11b0d0c3fc2830e58dbeab6409d588c0c82a3)
-- **Demo Video**: [Link to demo video] *(record 1-2 min walkthrough)*
+- **Frontend**: [https://merit-platform.vercel.app](https://merit-platform.vercel.app)
+- **Demo Video**: [Link to demo video]
+
+### Smart Contract (Soroban Testnet)
+
+| Item | Value |
+|------|-------|
+| **Contract Address** | [`CCTEUDESKDOVX2XT5OY4CYTFPVSYOXETBRNY6OW7Z36TEB2EWLELWKWF`](https://stellar.expert/explorer/testnet/contract/CCTEUDESKDOVX2XT5OY4CYTFPVSYOXETBRNY6OW7Z36TEB2EWLELWKWF) |
+| **Deploy TX Hash** | [`ddf89015528d31eae82f2d0c3726966426b210fb4b3bca8d97f6e72775dbec53`](https://stellar.expert/explorer/testnet/tx/ddf89015528d31eae82f2d0c3726966426b210fb4b3bca8d97f6e72775dbec53) |
+| **Contract Interaction TX** | [`d46785c4b9c41a94e02d2403c0e11b0d0c3fc2830e58dbeab6409d588c0c82a3`](https://stellar.expert/explorer/testnet/tx/d46785c4b9c41a94e02d2403c0e11b0d0c3fc2830e58dbeab6409d588c0c82a3) |
+| **WASM Hash** | `d2a20510fe179060724ddd8d8237c103ee4fcb48e5fa3f5176a9c5a6e2f6fa1c` |
+| **Network** | Stellar Testnet |
+| **Deployer Account** | [`GBC2Q2YBDDQESKGRUKKJ4PKPJ7H7JG6D6CELW4AAKYMNCSVYPF5C5ECN`](https://stellar.expert/explorer/testnet/account/GBC2Q2YBDDQESKGRUKKJ4PKPJ7H7JG6D6CELW4AAKYMNCSVYPF5C5ECN) |
+
+**Verify on Stellar Expert:**
+- [View Contract](https://stellar.expert/explorer/testnet/contract/CCTEUDESKDOVX2XT5OY4CYTFPVSYOXETBRNY6OW7Z36TEB2EWLELWKWF)
+- [View Deploy Transaction](https://stellar.expert/explorer/testnet/tx/ddf89015528d31eae82f2d0c3726966426b210fb4b3bca8d97f6e72775dbec53)
+- [View Interaction Transaction](https://stellar.expert/explorer/testnet/tx/d46785c4b9c41a94e02d2403c0e11b0d0c3fc2830e58dbeab6409d588c0c82a3)
+- [Stellar Lab](https://lab.stellar.org/r/testnet/contract/CCTEUDESKDOVX2XT5OY4CYTFPVSYOXETBRNY6OW7Z36TEB2EWLELWKWF)
 
 ## Features
 

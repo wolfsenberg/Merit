@@ -15,7 +15,7 @@ AI-assisted conditional funding platform that automates the end-to-end lifecycle
 |------|-------|
 | **Contract Address** | [`CCTEUDESKDOVX2XT5OY4CYTFPVSYOXETBRNY6OW7Z36TEB2EWLELWKWF`](https://stellar.expert/explorer/testnet/contract/CCTEUDESKDOVX2XT5OY4CYTFPVSYOXETBRNY6OW7Z36TEB2EWLELWKWF) |
 | **Deploy TX Hash** | [`ddf89015528d31eae82f2d0c3726966426b210fb4b3bca8d97f6e72775dbec53`](https://stellar.expert/explorer/testnet/tx/ddf89015528d31eae82f2d0c3726966426b210fb4b3bca8d97f6e72775dbec53) |
-| **Contract Interaction TX** | [`d46785c4b9c41a94e02d2403c0e11b0d0c3fc2830e58dbeab6409d588c0c82a3`](https://stellar.expert/explorer/testnet/tx/d46785c4b9c41a94e02d2403c0e11b0d0c3fc2830e58dbeab6409d588c0c82a3) |
+| **Contract Interaction TX** | [`24b3d1fed20a08a113f7daeb50ac747d39c39ade036cbab88eaf24b679ad4db7`](https://stellar.expert/explorer/testnet/tx/24b3d1fed20a08a113f7daeb50ac747d39c39ade036cbab88eaf24b679ad4db7) |
 | **WASM Hash** | `d2a20510fe179060724ddd8d8237c103ee4fcb48e5fa3f5176a9c5a6e2f6fa1c` |
 | **Network** | Stellar Testnet |
 | **Deployer Account** | [`GBC2Q2YBDDQESKGRUKKJ4PKPJ7H7JG6D6CELW4AAKYMNCSVYPF5C5ECN`](https://stellar.expert/explorer/testnet/account/GBC2Q2YBDDQESKGRUKKJ4PKPJ7H7JG6D6CELW4AAKYMNCSVYPF5C5ECN) |
@@ -23,7 +23,7 @@ AI-assisted conditional funding platform that automates the end-to-end lifecycle
 **Verify on Stellar Expert:**
 - [View Contract](https://stellar.expert/explorer/testnet/contract/CCTEUDESKDOVX2XT5OY4CYTFPVSYOXETBRNY6OW7Z36TEB2EWLELWKWF)
 - [View Deploy Transaction](https://stellar.expert/explorer/testnet/tx/ddf89015528d31eae82f2d0c3726966426b210fb4b3bca8d97f6e72775dbec53)
-- [View Interaction Transaction](https://stellar.expert/explorer/testnet/tx/d46785c4b9c41a94e02d2403c0e11b0d0c3fc2830e58dbeab6409d588c0c82a3)
+- [View Interaction Transaction](https://stellar.expert/explorer/testnet/tx/24b3d1fed20a08a113f7daeb50ac747d39c39ade036cbab88eaf24b679ad4db7)
 - [Stellar Lab](https://lab.stellar.org/r/testnet/contract/CCTEUDESKDOVX2XT5OY4CYTFPVSYOXETBRNY6OW7Z36TEB2EWLELWKWF)
 
 ## Features

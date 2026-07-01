@@ -1,8 +1,6 @@
 """Authentication service with register, login, refresh, and password reset logic."""
 
 import uuid
-from datetime import datetime, timedelta, timezone
-from typing import Optional
 
 from jose import JWTError
 from redis.asyncio import Redis
@@ -18,7 +16,6 @@ from app.core.security import (
     hash_password,
     verify_password,
 )
-from app.models.enums import UserRole
 from app.models.user import User
 from app.schemas.auth import (
     LoginRequest,

@@ -12,16 +12,12 @@ Tests cover:
 
 import uuid
 from datetime import datetime, timedelta, timezone
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, MagicMock
 
 import pytest
-import pytest_asyncio
 
-from app.models.application import Application
 from app.models.compliance_submission import ComplianceSubmission
-from app.models.eligibility_evaluation import EligibilityEvaluation
 from app.models.enums import (
-    ApplicationStatus,
     EligibilityStatus,
     RequirementType,
     VerificationStatus,
@@ -35,7 +31,6 @@ from app.services.compliance_engine import (
     _extract_value_for_requirement,
     _parse_frequency,
 )
-
 
 # ============================================================
 # Helper Factories

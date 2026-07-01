@@ -10,7 +10,7 @@ import uuid
 from datetime import datetime, timedelta, timezone
 from typing import Optional
 
-from sqlalchemy import select, and_
+from sqlalchemy import and_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.application import Application
@@ -23,7 +23,6 @@ from app.models.enums import (
 )
 from app.models.ocr_result import OCRResult
 from app.models.program_requirement import ProgramRequirement
-
 
 # Valid condition operators for requirement evaluation
 VALID_OPERATORS = frozenset(
@@ -293,7 +292,10 @@ class EligibilityService:
             reason = (
                 "Condition met"
                 if passed
-                else f"Value {actual_value} does not satisfy {requirement.condition_operator} {requirement.condition_value}"
+                else (
+                    f"Value {actual_value} does not satisfy "
+                    f"{requirement.condition_operator} {requirement.condition_value}"
+                )
             )
 
             rule_results.append(

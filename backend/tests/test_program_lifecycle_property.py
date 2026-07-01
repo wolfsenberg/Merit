@@ -8,26 +8,25 @@ lifecycle graph; no illegal transitions. DRAFT → ACTIVE → {PAUSED ↔ ACTIVE
 except PAUSED ↔ ACTIVE.
 """
 
+import sys
 import uuid
 from datetime import datetime, timezone
 from unittest.mock import AsyncMock, MagicMock
 
 import pytest
-from hypothesis import given, settings, assume, note
+from hypothesis import assume, given, settings
 from hypothesis import strategies as st
-from hypothesis.stateful import RuleBasedStateMachine, rule, initialize, invariant
+from hypothesis.stateful import RuleBasedStateMachine, initialize, invariant, rule
 
-import sys
 sys.path.insert(0, ".")
 
 from app.models.enums import ProgramStatus
 from app.models.program import Program
 from app.services.program_service import (
+    VALID_TRANSITIONS,
     InvalidTransitionError,
     ProgramService,
-    VALID_TRANSITIONS,
 )
-
 
 # ============================================================
 # Strategies

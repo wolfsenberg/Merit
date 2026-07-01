@@ -9,20 +9,22 @@ Requirements: 5.1, 5.6
 """
 
 import uuid
+from datetime import datetime
+from typing import Any, Optional
 
 from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile, status
+from pydantic import BaseModel, Field
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db
-from app.middleware.auth import get_current_user, require_roles
+from app.middleware.auth import require_roles
 from app.models.enums import DocumentType, UserRole, VerificationStatus
 from app.models.ocr_result import OCRResult
 from app.models.uploaded_document import UploadedDocument
 from app.models.user import User
 from app.schemas.document import UploadDocumentResponse
 from app.services.document_service import (
-    DocumentNotFoundError,
     DocumentService,
     DocumentServiceError,
     FileTooLargeError,
@@ -30,22 +32,14 @@ from app.services.document_service import (
 )
 from app.services.verification_service import (
     DocumentNotFoundError as VerificationDocNotFoundError,
+)
+from app.services.verification_service import (
     InvalidVerificationStateError,
     VerificationService,
     VerificationServiceError,
 )
 
 router = APIRouter()
-
-
-# ============================================================
-# Request/Response Schemas
-# ============================================================
-
-from datetime import datetime
-from typing import Any, Optional
-
-from pydantic import BaseModel, Field
 
 
 class ManualVerifyRequest(BaseModel):

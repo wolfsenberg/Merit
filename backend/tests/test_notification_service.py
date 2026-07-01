@@ -1,16 +1,15 @@
 """Unit tests for notification service."""
 
+import sys
 import uuid
 from datetime import datetime, timezone
 from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
-import sys
 sys.path.insert(0, ".")
 
 from app.models.enums import NotificationType
-from app.models.notification import Notification
 from app.schemas.notification import (
     NotificationListResponse,
     NotificationResponse,
@@ -21,7 +20,6 @@ from app.services.notification_service import (
     NotificationService,
     NotificationServiceError,
 )
-
 
 # ============================================================
 # Test fixtures
@@ -319,7 +317,7 @@ class TestMarkAsRead:
         mock_result.scalar_one_or_none.return_value = mock_notification
         mock_db.execute.return_value = mock_result
 
-        result = await notification_service.mark_as_read(
+        await notification_service.mark_as_read(
             notification_id=notification_id, user_id=user_id
         )
 
@@ -346,7 +344,6 @@ class TestMarkAsRead:
     async def test_mark_as_read_wrong_user(self, notification_service, mock_db):
         """Should raise NotificationNotFoundError when notification belongs to different user."""
         user_id = uuid.uuid4()
-        other_user_id = uuid.uuid4()
         notification_id = uuid.uuid4()
 
         # The query filters by both notification_id AND user_id, so wrong user returns None

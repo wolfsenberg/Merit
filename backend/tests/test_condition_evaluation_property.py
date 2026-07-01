@@ -9,14 +9,12 @@ for not_exists.
 
 import sys
 
-import pytest
-from hypothesis import given, settings, assume
+from hypothesis import given, settings
 from hypothesis import strategies as st
 
 sys.path.insert(0, ".")
 
-from app.services.compliance_engine import evaluate_condition, VALID_OPERATORS
-
+from app.services.compliance_engine import VALID_OPERATORS, evaluate_condition
 
 # ============================================================
 # Strategies

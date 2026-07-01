@@ -10,23 +10,21 @@ No user can access resources or perform actions outside their role's permissions
 - Super Admins have unrestricted access
 """
 
+import sys
 import uuid
 from datetime import datetime, timedelta, timezone
-from unittest.mock import AsyncMock, MagicMock
+from unittest.mock import MagicMock
 
-import pytest
 from fastapi import Depends, FastAPI
 from fastapi.testclient import TestClient
-from hypothesis import given, settings, assume
+from hypothesis import assume, given, settings
 from hypothesis import strategies as st
 from jose import jwt
 
-import sys
 sys.path.insert(0, ".")
 
 from app.core.config import get_settings
-from app.core.security import create_access_token
-from app.middleware.auth import get_current_user, require_roles, require_org_access
+from app.middleware.auth import get_current_user, require_org_access, require_roles
 from app.models.enums import UserRole
 
 app_settings = get_settings()

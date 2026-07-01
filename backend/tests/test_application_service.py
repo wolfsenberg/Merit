@@ -1,27 +1,25 @@
 """Unit tests for application service - recipient application flow."""
 
+import sys
 import uuid
 from datetime import datetime, timezone
 from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
-import sys
 sys.path.insert(0, ".")
 
 from app.models.application import Application
 from app.models.enums import ApplicationStatus, ProgramStatus
 from app.models.program import Program
-from app.schemas.application import ApplicationResponse, CreateApplicationRequest
+from app.schemas.application import CreateApplicationRequest
 from app.services.application_service import (
     ApplicationService,
-    ApplicationServiceError,
     DuplicateApplicationError,
     ProgramCapacityReachedError,
     ProgramNotActiveError,
     ProgramNotFoundError,
 )
-
 
 # ============================================================
 # Helpers

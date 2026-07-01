@@ -2,22 +2,19 @@
 
 import base64
 import os
+import sys
 import uuid
 from datetime import datetime, timezone
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-import sys
 sys.path.insert(0, ".")
 
-from app.models.funding_pool import FundingPool
 from app.models.stellar_wallet import StellarWallet
 from app.schemas.wallet import (
     FundingPoolCreateRequest,
-    FundingPoolResponse,
     WalletCreateRequest,
-    WalletResponse,
 )
 from app.services.wallet_service import (
     EncryptionError,
@@ -29,7 +26,6 @@ from app.services.wallet_service import (
     decrypt_private_key,
     encrypt_private_key,
 )
-
 
 # ============================================================
 # Test fixtures
@@ -176,11 +172,11 @@ class TestCreateWallet:
         mock_result.scalar_one_or_none.return_value = None
         mock_db.execute.return_value = mock_result
 
-        with patch("app.services.wallet_service.Keypair") as MockKeypair:
+        with patch("app.services.wallet_service.Keypair") as mock_keypair:
             mock_kp = MagicMock()
             mock_kp.public_key = "GCEZWKCA5VLDNRLN3RPRJMRZOX3Z6G5CHCGSNFHEBD9AFZQ7TM4JRS9A"
             mock_kp.secret = "SCZANGBA5YHTNYVVV3C7CAZMCLXPILHSE2F3RF7WRGAYRWRQDADDZNO3"
-            MockKeypair.random.return_value = mock_kp
+            mock_keypair.random.return_value = mock_kp
 
             result = await wallet_service.create_wallet(user_id)
 
@@ -225,11 +221,11 @@ class TestCreateWallet:
             "duplicate key", params=None, orig=Exception()
         )
 
-        with patch("app.services.wallet_service.Keypair") as MockKeypair:
+        with patch("app.services.wallet_service.Keypair") as mock_keypair:
             mock_kp = MagicMock()
             mock_kp.public_key = "GCEZWKCA5VLDNRLN3RPRJMRZOX3Z6G5CHCGSNFHEBD9AFZQ7TM4JRS9A"
             mock_kp.secret = "SCZANGBA5YHTNYVVV3C7CAZMCLXPILHSE2F3RF7WRGAYRWRQDADDZNO3"
-            MockKeypair.random.return_value = mock_kp
+            mock_keypair.random.return_value = mock_kp
 
             with pytest.raises(WalletAlreadyExistsError):
                 await wallet_service.create_wallet(user_id)
@@ -246,11 +242,11 @@ class TestCreateWallet:
         mock_result.scalar_one_or_none.return_value = None
         mock_db.execute.return_value = mock_result
 
-        with patch("app.services.wallet_service.Keypair") as MockKeypair:
+        with patch("app.services.wallet_service.Keypair") as mock_keypair:
             mock_kp = MagicMock()
             mock_kp.public_key = "GCEZWKCA5VLDNRLN3RPRJMRZOX3Z6G5CHCGSNFHEBD9AFZQ7TM4JRS9A"
             mock_kp.secret = test_secret
-            MockKeypair.random.return_value = mock_kp
+            mock_keypair.random.return_value = mock_kp
 
             await wallet_service.create_wallet(user_id)
 
@@ -361,11 +357,11 @@ class TestCreateFundingPool:
         mock_result.scalar_one_or_none.return_value = None
         mock_db.execute.return_value = mock_result
 
-        with patch("app.services.wallet_service.Keypair") as MockKeypair:
+        with patch("app.services.wallet_service.Keypair") as mock_keypair:
             mock_kp = MagicMock()
             mock_kp.public_key = "GDQP2KPQGKIHYJGXNUIYOMHARUARCA7DJT5FO2FFOOBD3XCDDB5LBER"
             mock_kp.secret = "SCZANGBA5YHTNYVVV3C7CAZMCLXPILHSE2F3RF7WRGAYRWRQDADDZNO3"
-            MockKeypair.random.return_value = mock_kp
+            mock_keypair.random.return_value = mock_kp
 
             result = await wallet_service.create_funding_pool(
                 program_id=program_id,
@@ -416,11 +412,11 @@ class TestCreateFundingPool:
             "duplicate key", params=None, orig=Exception()
         )
 
-        with patch("app.services.wallet_service.Keypair") as MockKeypair:
+        with patch("app.services.wallet_service.Keypair") as mock_keypair:
             mock_kp = MagicMock()
             mock_kp.public_key = "GDQP2KPQGKIHYJGXNUIYOMHARUARCA7DJT5FO2FFOOBD3XCDDB5LBER"
             mock_kp.secret = "SCZANGBA5YHTNYVVV3C7CAZMCLXPILHSE2F3RF7WRGAYRWRQDADDZNO3"
-            MockKeypair.random.return_value = mock_kp
+            mock_keypair.random.return_value = mock_kp
 
             with pytest.raises(FundingPoolAlreadyExistsError):
                 await wallet_service.create_funding_pool(
@@ -442,11 +438,11 @@ class TestCreateFundingPool:
         mock_result.scalar_one_or_none.return_value = None
         mock_db.execute.return_value = mock_result
 
-        with patch("app.services.wallet_service.Keypair") as MockKeypair:
+        with patch("app.services.wallet_service.Keypair") as mock_keypair:
             mock_kp = MagicMock()
             mock_kp.public_key = "GDQP2KPQGKIHYJGXNUIYOMHARUARCA7DJT5FO2FFOOBD3XCDDB5LBER"
             mock_kp.secret = test_secret
-            MockKeypair.random.return_value = mock_kp
+            mock_keypair.random.return_value = mock_kp
 
             await wallet_service.create_funding_pool(
                 program_id=program_id,

@@ -10,9 +10,9 @@ Tests cover:
 
 import sys
 import uuid
-from datetime import datetime, timezone
+from datetime import datetime
 from typing import Optional
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, MagicMock
 
 sys.path.insert(0, ".")
 
@@ -24,12 +24,9 @@ from app.services.verification_service import (
     DocumentNotFoundError,
     InvalidVerificationStateError,
     NotificationPlaceholder,
-    SubmissionNotFoundError,
     VerificationService,
-    VerificationServiceError,
     determine_verification_status,
 )
-
 
 # ============================================================
 # Tests for determine_verification_status

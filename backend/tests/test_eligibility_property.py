@@ -10,15 +10,13 @@ _determine_overall_status logic across all possible input combinations.
 import sys
 from unittest.mock import MagicMock
 
-import pytest
-from hypothesis import given, settings, assume
+from hypothesis import given, settings
 from hypothesis import strategies as st
 
 sys.path.insert(0, ".")
 
 from app.models.enums import EligibilityStatus
 from app.services.compliance_engine import EligibilityService
-
 
 # ============================================================
 # Strategies

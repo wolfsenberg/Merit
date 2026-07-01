@@ -3,7 +3,7 @@
 Falls back to a no-op mock when Redis is not available (local dev without Docker).
 """
 
-from redis.asyncio import Redis, ConnectionPool
+from redis.asyncio import ConnectionPool, Redis
 
 from app.core.config import get_settings
 

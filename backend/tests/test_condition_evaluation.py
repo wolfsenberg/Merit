@@ -15,7 +15,6 @@ sys.path.insert(0, ".")
 
 from app.services.compliance_engine import evaluate_condition
 
-
 # ============================================================
 # Numeric Comparison Tests (lte, gte, lt, gt)
 # ============================================================

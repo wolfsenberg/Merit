@@ -1,29 +1,28 @@
 """Unit tests for requirement management - add, remove, and list requirements."""
 
+import sys
 import uuid
 from datetime import datetime, timezone
 from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
-import sys
 sys.path.insert(0, ".")
 
 from app.models.enums import ProgramStatus, RequirementType
 from app.models.program import Program
 from app.models.program_requirement import ProgramRequirement
 from app.schemas.program import (
-    AddRequirementRequest,
-    RequirementResponse,
     VALID_CONDITION_OPERATORS,
     VALID_VERIFICATION_FREQUENCIES,
+    AddRequirementRequest,
+    RequirementResponse,
 )
 from app.services.program_service import (
     ProgramNotFoundError,
     ProgramService,
     ProgramServiceError,
 )
-
 
 # ============================================================
 # Schema Validation Tests

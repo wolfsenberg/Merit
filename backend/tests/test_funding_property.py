@@ -17,15 +17,15 @@ current eligibility determination.
 import base64
 import hashlib
 import os
+import sys
 import uuid
 from decimal import Decimal
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
-from hypothesis import given, settings, assume
+from hypothesis import assume, given, settings
 from hypothesis import strategies as st
 
-import sys
 sys.path.insert(0, ".")
 
 from app.models.eligibility_evaluation import EligibilityEvaluation
@@ -39,7 +39,6 @@ from app.services.funding_service import (
     NotEligibleError,
     StellarPaymentResult,
 )
-
 
 # ============================================================
 # Strategies
@@ -265,7 +264,7 @@ class TestPropertyP1FundingIntegrity:
                 "app.services.wallet_service.decrypt_private_key",
                 return_value="SCZANGBA5YHTNYVVV3C7CAZMCLXPILHSE2F3RF7WRGAYRWRQDADDZNO3",
             ):
-                result = await service.disburse_funds(
+                await service.disburse_funds(
                     recipient_id=recipient_id,
                     program_id=program_id,
                     amount=amount,

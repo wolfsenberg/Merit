@@ -14,6 +14,7 @@ Tests cover:
 
 import base64
 import os
+import sys
 import uuid
 from datetime import datetime, timezone
 from decimal import Decimal
@@ -21,20 +22,17 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-import sys
 sys.path.insert(0, ".")
 
 from app.models.eligibility_evaluation import EligibilityEvaluation
 from app.models.enums import EligibilityStatus
 from app.models.funding_pool import FundingPool
-from app.models.program import Program
 from app.models.stellar_wallet import StellarWallet
 from app.models.transaction import Transaction
 from app.schemas.funding import (
     DisbursementRequest,
     DisbursementResponse,
     PauseDisbursementsResponse,
-    TransactionHistoryItem,
 )
 from app.services.funding_service import (
     DisbursementInProgressError,
@@ -48,7 +46,6 @@ from app.services.funding_service import (
     StellarTransactionError,
     retry_pending_transactions,
 )
-
 
 # ============================================================
 # Test fixtures
@@ -327,7 +324,7 @@ class TestDisburseFunds:
             "app.services.wallet_service.decrypt_private_key",
             return_value="SCZANGBA5YHTNYVVV3C7CAZMCLXPILHSE2F3RF7WRGAYRWRQDADDZNO3",
         ):
-            result = await funding_service.disburse_funds(
+            await funding_service.disburse_funds(
                 recipient_id=sample_ids["recipient_id"],
                 program_id=sample_ids["program_id"],
                 amount=500.0,

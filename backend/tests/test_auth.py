@@ -1,14 +1,11 @@
 """Unit tests for authentication module - security utilities and schemas."""
 
-import time
+import sys
 import uuid
-from datetime import datetime, timedelta, timezone
-from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 from jose import jwt
 
-import sys
 sys.path.insert(0, ".")
 
 from app.core.config import get_settings
@@ -20,7 +17,7 @@ from app.core.security import (
     verify_password,
 )
 from app.models.enums import UserRole
-from app.schemas.auth import LoginRequest, RegisterRequest, TokenResponse, UserResponse
+from app.schemas.auth import LoginRequest, RegisterRequest
 
 settings = get_settings()
 

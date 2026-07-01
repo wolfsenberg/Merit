@@ -12,22 +12,18 @@ import sys
 
 sys.path.insert(0, ".")
 
-import pytest
-from hypothesis import given, settings, assume, note
+from hypothesis import assume, given, settings
 from hypothesis import strategies as st
 
 from app.models.enums import DocumentType, VerificationStatus
 from app.services.ocr_service import (
     EXPECTED_FIELDS,
-    OCRService,
     calculate_confidence,
     extract_structured_data,
-    get_expected_fields,
 )
 from app.services.verification_service import (
     determine_verification_status,
 )
-
 
 # ============================================================
 # Strategies

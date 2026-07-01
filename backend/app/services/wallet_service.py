@@ -8,7 +8,6 @@ import base64
 import os
 import uuid
 from datetime import datetime, timezone
-from typing import Optional
 
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 from sqlalchemy import select

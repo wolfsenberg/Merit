@@ -1,22 +1,20 @@
 """Unit tests for audit logging service."""
 
+import sys
 import uuid
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timedelta, timezone
 from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
-import sys
 sys.path.insert(0, ".")
 
-from app.models.audit_log import AuditLog
 from app.schemas.audit import (
     AuditLogListResponse,
     AuditLogQueryParams,
     AuditLogResponse,
 )
 from app.services.audit_service import AuditService
-
 
 # ============================================================
 # Test fixtures

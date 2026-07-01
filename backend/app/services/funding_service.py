@@ -20,7 +20,6 @@ from app.models.program import Program
 from app.models.stellar_wallet import StellarWallet
 from app.models.transaction import Transaction
 
-
 # =============================================================================
 # Error Classes
 # =============================================================================

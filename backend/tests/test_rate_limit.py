@@ -1,17 +1,15 @@
 """Tests for Redis-based rate limiting middleware."""
 
 import uuid
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, MagicMock
 
 import pytest
-from fastapi import FastAPI, Depends, status
-from fastapi.testclient import TestClient
-from httpx import AsyncClient, ASGITransport
+from fastapi import Depends, FastAPI
+from httpx import ASGITransport, AsyncClient
 
 from app.core.config import get_settings
 from app.core.security import create_access_token
 from app.middleware.rate_limit import (
-    RATE_LIMIT_WINDOW,
     _check_rate_limit,
     _get_client_ip,
     rate_limit_dependency,

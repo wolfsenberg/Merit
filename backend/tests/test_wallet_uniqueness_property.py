@@ -9,21 +9,20 @@ Each user has exactly zero or one wallet, and wallet public keys are globally un
 
 import base64
 import os
+import sys
 import uuid
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
-from hypothesis import given, settings, assume
+from hypothesis import given, settings
 from hypothesis import strategies as st
 
-import sys
 sys.path.insert(0, ".")
 
 from app.services.wallet_service import (
     WalletAlreadyExistsError,
     WalletService,
 )
-
 
 # ============================================================
 # Strategies
@@ -153,11 +152,11 @@ class TestPropertyP9WalletUniqueness:
         mock_db = _make_mock_db_first_succeeds_then_exists()
         service = WalletService(db=mock_db)
 
-        with patch("app.services.wallet_service.Keypair") as MockKeypair:
+        with patch("app.services.wallet_service.Keypair") as mock_keypair:
             mock_kp = MagicMock()
             mock_kp.public_key = f"G{'A' * 55}"  # Valid-length Stellar public key
             mock_kp.secret = f"S{'B' * 55}"  # Valid-length Stellar secret key
-            MockKeypair.random.return_value = mock_kp
+            mock_keypair.random.return_value = mock_kp
 
             # First call should succeed
             result = await service.create_wallet(user_id)

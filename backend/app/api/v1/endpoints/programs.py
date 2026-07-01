@@ -19,7 +19,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db
-from app.middleware.auth import get_current_user, require_roles
+from app.middleware.auth import require_roles
 from app.models.enums import ProgramStatus, UserRole
 from app.models.user import User
 from app.schemas.program import (

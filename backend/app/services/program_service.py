@@ -5,7 +5,7 @@ from base64 import b64decode, b64encode
 from datetime import datetime, timezone
 from typing import Optional
 
-from sqlalchemy import select, and_
+from sqlalchemy import and_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.enums import ProgramStatus

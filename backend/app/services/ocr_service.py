@@ -13,7 +13,6 @@ from typing import Optional, Protocol
 
 from app.models.enums import DocumentType
 
-
 # ============================================================
 # OCR Engine Protocol (mockable abstraction)
 # ============================================================
@@ -143,7 +142,10 @@ def get_expected_fields(document_type: DocumentType) -> list[str]:
 # Each pattern maps a field name to a compiled regex with a named group 'value'.
 FIELD_PATTERNS: dict[str, list[re.Pattern]] = {
     "gwa": [
-        re.compile(r"(?:gwa|general\s*weighted\s*average|g\.?w\.?a\.?)\s*[:\-]?\s*(?P<value>\d+\.?\d*)", re.IGNORECASE),
+        re.compile(
+            r"(?:gwa|general\s*weighted\s*average|g\.?w\.?a\.?)\s*[:\-]?\s*(?P<value>\d+\.?\d*)",
+            re.IGNORECASE,
+        ),
         re.compile(r"(?:average|grade)\s*[:\-]?\s*(?P<value>\d+\.\d+)", re.IGNORECASE),
     ],
     "student_id": [
@@ -151,27 +153,50 @@ FIELD_PATTERNS: dict[str, list[re.Pattern]] = {
         re.compile(r"(?:id\s*(?:no|number|#))\s*[:\-]?\s*(?P<value>\d[\w\-]+)", re.IGNORECASE),
     ],
     "semester": [
-        re.compile(r"(?:semester|sem)\s*[:\-]?\s*(?P<value>(?:1st|2nd|first|second|summer|midyear)[\w\s]*)", re.IGNORECASE),
+        re.compile(
+            r"(?:semester|sem)\s*[:\-]?\s*(?P<value>(?:1st|2nd|first|second|summer|midyear)[\w\s]*)",
+            re.IGNORECASE,
+        ),
         re.compile(r"(?P<value>(?:first|second|1st|2nd)\s+semester)", re.IGNORECASE),
     ],
     "program_name": [
-        re.compile(r"(?:program|course|degree)\s*[:\-]?\s*(?P<value>[A-Za-z\s]+(?:Science|Engineering|Arts|Education|Business|Computing|Technology)[\w\s]*)", re.IGNORECASE),
+        re.compile(
+            r"(?:program|course|degree)\s*[:\-]?\s*(?P<value>[A-Za-z\s]+"
+            r"(?:Science|Engineering|Arts|Education|Business|Computing|Technology)[\w\s]*)",
+            re.IGNORECASE,
+        ),
         re.compile(r"(?:program|course|degree)\s*[:\-]?\s*(?P<value>[A-Z][A-Za-z\s]{3,})", re.IGNORECASE),
     ],
     "enrollment_status": [
-        re.compile(r"(?:enrollment\s*status|status)\s*[:\-]?\s*(?P<value>enrolled|active|inactive|regular|irregular|LOA|withdrawn|graduated)", re.IGNORECASE),
+        re.compile(
+            r"(?:enrollment\s*status|status)\s*[:\-]?\s*"
+            r"(?P<value>enrolled|active|inactive|regular|irregular|LOA|withdrawn|graduated)",
+            re.IGNORECASE,
+        ),
         re.compile(r"(?P<value>(?:currently\s+)?enrolled|regular|irregular)", re.IGNORECASE),
     ],
     "recipient_name": [
-        re.compile(r"(?:awarded?\s+to|presented?\s+to|name|recipient)\s*[:\-]?\s*(?P<value>[A-Z][a-zA-Z\s\.]+)", re.IGNORECASE),
+        re.compile(
+            r"(?:awarded?\s+to|presented?\s+to|name|recipient)\s*[:\-]?\s*"
+            r"(?P<value>[A-Z][a-zA-Z\s\.]+)",
+            re.IGNORECASE,
+        ),
     ],
     "certificate_title": [
         re.compile(r"(?:certificate\s+of|this\s+certifies)\s*[:\-]?\s*(?P<value>[A-Za-z\s]+)", re.IGNORECASE),
         re.compile(r"(?P<value>certificate\s+of\s+[A-Za-z\s]+)", re.IGNORECASE),
     ],
     "date_issued": [
-        re.compile(r"(?:date\s*issued|issued\s*(?:on|date)?|date)\s*[:\-]?\s*(?P<value>\d{1,2}[\-/]\d{1,2}[\-/]\d{2,4})", re.IGNORECASE),
-        re.compile(r"(?:date\s*issued|issued\s*(?:on|date)?|date)\s*[:\-]?\s*(?P<value>[A-Za-z]+\s+\d{1,2},?\s*\d{4})", re.IGNORECASE),
+        re.compile(
+            r"(?:date\s*issued|issued\s*(?:on|date)?|date)\s*[:\-]?\s*"
+            r"(?P<value>\d{1,2}[\-/]\d{1,2}[\-/]\d{2,4})",
+            re.IGNORECASE,
+        ),
+        re.compile(
+            r"(?:date\s*issued|issued\s*(?:on|date)?|date)\s*[:\-]?\s*"
+            r"(?P<value>[A-Za-z]+\s+\d{1,2},?\s*\d{4})",
+            re.IGNORECASE,
+        ),
     ],
     "full_name": [
         re.compile(r"(?:full\s*name|name)\s*[:\-]?\s*(?P<value>[A-Z][a-zA-Z\s\.]+)", re.IGNORECASE),
@@ -180,18 +205,34 @@ FIELD_PATTERNS: dict[str, list[re.Pattern]] = {
         re.compile(r"(?:id\s*(?:no|number|#)|no\.?)\s*[:\-]?\s*(?P<value>[\w\-]+)", re.IGNORECASE),
     ],
     "date_of_birth": [
-        re.compile(r"(?:date\s*of\s*birth|dob|birth\s*date|birthday)\s*[:\-]?\s*(?P<value>\d{1,2}[\-/]\d{1,2}[\-/]\d{2,4})", re.IGNORECASE),
-        re.compile(r"(?:date\s*of\s*birth|dob|birth\s*date|birthday)\s*[:\-]?\s*(?P<value>[A-Za-z]+\s+\d{1,2},?\s*\d{4})", re.IGNORECASE),
+        re.compile(
+            r"(?:date\s*of\s*birth|dob|birth\s*date|birthday)\s*[:\-]?\s*"
+            r"(?P<value>\d{1,2}[\-/]\d{1,2}[\-/]\d{2,4})",
+            re.IGNORECASE,
+        ),
+        re.compile(
+            r"(?:date\s*of\s*birth|dob|birth\s*date|birthday)\s*[:\-]?\s*"
+            r"(?P<value>[A-Za-z]+\s+\d{1,2},?\s*\d{4})",
+            re.IGNORECASE,
+        ),
     ],
     "academic_year": [
-        re.compile(r"(?:academic\s*year|a\.?y\.?|school\s*year)\s*[:\-]?\s*(?P<value>\d{4}\s*[\-/]\s*\d{4})", re.IGNORECASE),
+        re.compile(
+            r"(?:academic\s*year|a\.?y\.?|school\s*year)\s*[:\-]?\s*"
+            r"(?P<value>\d{4}\s*[\-/]\s*\d{4})",
+            re.IGNORECASE,
+        ),
         re.compile(r"(?P<value>\d{4}\s*[\-]\s*\d{4})\s*(?:academic|school)", re.IGNORECASE),
     ],
     "title": [
         re.compile(r"(?:title|subject|report\s*title)\s*[:\-]?\s*(?P<value>[A-Za-z\s]+)", re.IGNORECASE),
     ],
     "author": [
-        re.compile(r"(?:author|prepared\s*by|submitted\s*by|by)\s*[:\-]?\s*(?P<value>[A-Z][a-zA-Z\s\.]+)", re.IGNORECASE),
+        re.compile(
+            r"(?:author|prepared\s*by|submitted\s*by|by)\s*[:\-]?\s*"
+            r"(?P<value>[A-Z][a-zA-Z\s\.]+)",
+            re.IGNORECASE,
+        ),
     ],
     "date": [
         re.compile(r"(?:date)\s*[:\-]?\s*(?P<value>\d{1,2}[\-/]\d{1,2}[\-/]\d{2,4})", re.IGNORECASE),

@@ -9,25 +9,23 @@ action == op.type, resource_id == op.target_id, and created_at within
 """
 
 import inspect
+import sys
 import uuid
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timedelta, timezone
 from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 from hypothesis import given, settings
 from hypothesis import strategies as st
 
-import sys
 sys.path.insert(0, ".")
 
-from app.models.audit_log import AuditLog
 from app.schemas.audit import (
     AuditLogListResponse,
     AuditLogQueryParams,
     AuditLogResponse,
 )
 from app.services.audit_service import AuditService
-
 
 # ============================================================
 # Strategies

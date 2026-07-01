@@ -7,7 +7,6 @@ Implements sliding window rate limiting using Redis:
 Returns 429 Too Many Requests when limits are exceeded.
 """
 
-import time
 from typing import Optional
 
 from fastapi import Depends, HTTPException, Request, status

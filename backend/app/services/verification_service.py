@@ -16,9 +16,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.compliance_submission import ComplianceSubmission
 from app.models.enums import NotificationType, VerificationStatus
-from app.models.ocr_result import OCRResult
 from app.models.uploaded_document import UploadedDocument
-
 
 # Default confidence threshold for auto-verification (configurable per program)
 DEFAULT_CONFIDENCE_THRESHOLD = 0.75

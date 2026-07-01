@@ -1,21 +1,20 @@
 """Unit tests for RBAC middleware - JWT validation and role-based access control."""
 
+import sys
 import uuid
 from datetime import datetime, timedelta, timezone
 from unittest.mock import AsyncMock, MagicMock
 
-import pytest
-from fastapi import FastAPI, Depends
+from fastapi import Depends, FastAPI
 from fastapi.testclient import TestClient
 from jose import jwt
 
-import sys
 sys.path.insert(0, ".")
 
 from app.core.config import get_settings
 from app.core.database import get_db
 from app.core.security import create_access_token, create_refresh_token
-from app.middleware.auth import get_current_user, require_roles, require_org_access
+from app.middleware.auth import get_current_user, require_org_access, require_roles
 from app.models.enums import UserRole
 
 settings = get_settings()

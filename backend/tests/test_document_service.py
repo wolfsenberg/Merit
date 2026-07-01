@@ -1,20 +1,18 @@
 """Unit tests for document upload and storage service."""
 
 import os
+import sys
 import uuid
 from datetime import datetime, timezone
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-import sys
 sys.path.insert(0, ".")
 
 from app.models.enums import DocumentType, VerificationStatus
 from app.schemas.document import DocumentResponse, UploadDocumentResponse
 from app.services.document_service import (
-    ALLOWED_EXTENSIONS,
-    ALLOWED_FILE_SIGNATURES,
     MAX_UPLOAD_SIZE_BYTES,
     DocumentService,
     DocumentServiceError,
@@ -27,7 +25,6 @@ from app.services.document_service import (
     validate_file_size,
     validate_magic_bytes,
 )
-
 
 # ============================================================
 # Test Data Helpers

@@ -1,31 +1,27 @@
 """Unit tests for program service - CRUD operations and lifecycle management."""
 
+import sys
 import uuid
-from base64 import b64encode
-from datetime import datetime, timedelta, timezone
-from unittest.mock import AsyncMock, MagicMock, patch
+from datetime import datetime, timezone
+from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
-import sys
 sys.path.insert(0, ".")
 
 from app.models.enums import ProgramStatus
 from app.models.program import Program
 from app.schemas.program import (
     CreateProgramRequest,
-    ProgramListResponse,
-    ProgramResponse,
     UpdateProgramRequest,
 )
 from app.services.program_service import (
+    VALID_TRANSITIONS,
     InvalidTransitionError,
     ProgramNotFoundError,
     ProgramService,
     ProgramServiceError,
-    VALID_TRANSITIONS,
 )
-
 
 # ============================================================
 # Schema Validation Tests

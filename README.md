@@ -39,9 +39,9 @@ Under the hood, Merit uses Stellar and Soroban smart contracts to make scholarsh
 
 **Live App:** [https://merit-platform.vercel.app](https://merit-platform.vercel.app)
 
-**Video Demo:** [Link to demo video]
+**Video Demo:** [Google Drive](https://drive.google.com/file/d/1nVYC2nSY6I3cKdIOtYh2N7N0Q3mxtDoL/view?usp=sharing)
 
-**Pitch Document:** https://docs.google.com/document/d/1QGBxMLmTLBD-mrm6kra0BLmF624hGDq6nIGt92q4z1c/edit?usp=sharing
+**Pitch Document:** [Google Docs](https://docs.google.com/document/d/1QGBxMLmTLBD-mrm6kra0BLmF624hGDq6nIGt92q4z1c/edit?usp=sharing)
 
 ---
 

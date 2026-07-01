@@ -41,6 +41,7 @@ app = FastAPI(
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.allowed_origins,
+    allow_origin_regex=r"https://.*\\.vercel\\.app|https://.*\\.onrender\\.com|http://localhost:\\d+",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -48,9 +49,16 @@ app.add_middleware(
 
 # Trusted Host Middleware
 allowed_hosts = settings.allowed_hosts or ["*"]
+if settings.debug:
+    middleware_hosts = ["*"]
+elif settings.environment.lower() in {"production", "staging", "test"}:
+    middleware_hosts = ["*"]
+else:
+    middleware_hosts = allowed_hosts
+
 app.add_middleware(
     TrustedHostMiddleware,
-    allowed_hosts=["*"] if settings.debug or "production" in settings.environment.lower() else allowed_hosts,
+    allowed_hosts=middleware_hosts,
 )
 
 

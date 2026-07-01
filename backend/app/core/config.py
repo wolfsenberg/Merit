@@ -17,8 +17,8 @@ class Settings(BaseSettings):
 
     # API
     api_v1_prefix: str = "/api/v1"
-    allowed_origins: list[str] = ["http://localhost:3000"]
-    allowed_hosts: list[str] = ["localhost", "127.0.0.1", "*.localhost"]
+    allowed_origins: list[str] = ["http://localhost:3000", "http://localhost:3001"]
+    allowed_hosts: list[str] = ["localhost", "127.0.0.1", "*.localhost", "*.onrender.com", "*.vercel.app"]
 
     # Database
     database_url: str = "postgresql+asyncpg://merit:merit@localhost:5432/merit"

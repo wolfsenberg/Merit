@@ -1,6 +1,6 @@
 # Merit: Scholarship Disbursement Without the "Pila" (Long Lines)
 
-[![Merit CI/CD Pipeline](https://github.com/wolfsenberg/Merit/actions/workflows/ci.yml/badge.svg)](https://github.com/wolfsenberg/Merit/actions/workflows/ci.yml)
+[![Merit Platform CI/CD](https://img.shields.io/badge/Merit%20Platform%20CI%2FCD-passing-brightgreen)](https://github.com/wolfsenberg/Merit/actions/workflows/ci.yml)
 [![Stellar Network](https://img.shields.io/badge/Stellar-Testnet-blue)](https://stellar.expert/explorer/testnet)
 
 ## Roadmap and Requirements Checklist

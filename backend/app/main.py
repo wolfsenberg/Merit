@@ -47,9 +47,10 @@ app.add_middleware(
 )
 
 # Trusted Host Middleware
+allowed_hosts = settings.allowed_hosts or ["*"]
 app.add_middleware(
     TrustedHostMiddleware,
-    allowed_hosts=["*"] if settings.debug else ["merit.io", "*.merit.io", "localhost"],
+    allowed_hosts=["*"] if settings.debug or "production" in settings.environment.lower() else allowed_hosts,
 )
 
 

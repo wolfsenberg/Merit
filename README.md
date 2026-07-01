@@ -25,11 +25,11 @@
 
 ### The Solution: Enter Merit, a Digital Scholarship Wallet and Conditional Funding Platform
 
-<!-- Banner image placeholder -->
 
-**Desktop:** <!-- Desktop screenshot placeholder -->
+**Desktop:** <img width="1887" height="974" alt="image" src="https://github.com/user-attachments/assets/75a81c1a-cede-42e8-bcc6-876b72bb1aae" />
 
-**Mobile:** <!-- Mobile screenshot placeholder -->
+**Mobile:** <img width="520" height="970" alt="image" src="https://github.com/user-attachments/assets/860a67f1-6c5b-4c9f-b302-72f674664f39" />
+
 
 Merit is a scholarship disbursement platform built for students, schools, foundations, and government scholarship providers. It turns the scholarship release process into a wallet-based flow: scholars can receive, track, and cash out funds without needing to skip class, wait in long lines, or rely on manual payout schedules.
 
@@ -41,7 +41,7 @@ Under the hood, Merit uses Stellar and Soroban smart contracts to make scholarsh
 
 **Video Demo:** [Link to demo video]
 
-**Pitch Document:** [Link to pitch document]
+**Pitch Document:** https://docs.google.com/document/d/1QGBxMLmTLBD-mrm6kra0BLmF624hGDq6nIGt92q4z1c/edit?usp=sharing
 
 ---
 
@@ -137,6 +137,9 @@ Instead of making scholars choose between class and claiming money, Merit lets f
 | `release_funds` | Releases funds to an eligible scholar wallet. |
 | `pause_funding` | Pauses disbursements for a program. |
 | `resume_funding` | Resumes disbursements for a program. |
+
+<img width="1130" height="474" alt="Screenshot 2026-06-29 192745" src="https://github.com/user-attachments/assets/3f36ecf1-0be3-4806-b432-b33272cbf3da" />
+<img width="1482" height="414" alt="Screenshot 2026-06-29 194526" src="https://github.com/user-attachments/assets/e37d8ec5-5c22-488a-a86d-ca6cd12dadab" />
 
 **Verify on Stellar Expert:**
 *   [View Contract](https://stellar.expert/explorer/testnet/contract/CCTEUDESKDOVX2XT5OY4CYTFPVSYOXETBRNY6OW7Z36TEB2EWLELWKWF)

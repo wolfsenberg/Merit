@@ -20,6 +20,9 @@ out/
 .vercel
 
 # IDE
+.agents/
+.codex/
+.kiro/
 .vscode/
 .idea/
 *.swp
@@ -37,7 +40,8 @@ Thumbs.db
 # Docker
 *.log
 
-# Certificates (keep .gitkeep)
+# Certificates
+certs/
 certs/*.pem
 certs/*.key
 certs/*.crt

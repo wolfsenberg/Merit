@@ -16,6 +16,28 @@ class DisbursementRequest(BaseModel):
     compliance_evaluation_id: uuid.UUID
 
 
+class CashOutRequest(BaseModel):
+    """Schema for a wallet cashout request."""
+
+    amount: float = Field(..., gt=0, description="Cashout amount, must be positive")
+    method: str
+    account_number: str
+    account_name: str
+
+
+class CashOutResponse(BaseModel):
+    """Schema for a wallet cashout response."""
+
+    id: uuid.UUID
+    user_id: uuid.UUID
+    balance: float
+    status: str
+    memo: Optional[str] = None
+    created_at: datetime
+
+    model_config = {"from_attributes": True}
+
+
 class DisbursementResponse(BaseModel):
     """Schema for the result of a disbursement operation."""
 

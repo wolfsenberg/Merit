@@ -6,6 +6,7 @@ import { ArrowLeft, Smartphone, Building2, CheckCircle2, Shield } from "lucide-r
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { cashOutDemoLedger, useDemoLedger } from "@/lib/demo-ledger";
 
 type CashOutMethod = "gcash" | "maya" | "bank" | null;
 type Step = "method" | "details" | "confirm" | "success";
@@ -17,12 +18,26 @@ export default function CashOutPage() {
   const [amount, setAmount] = useState("");
   const [accountNumber, setAccountNumber] = useState("");
   const [accountName, setAccountName] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const { ledger } = useDemoLedger();
 
-  const balance = 10000;
+  const balance = ledger.balancePhp;
   const parsedAmount = parseFloat(amount) || 0;
 
   const handleSubmit = () => {
-    setStep("success");
+    try {
+      cashOutDemoLedger({
+        amount: parsedAmount,
+        method: method ?? "gcash",
+        accountNumber,
+        accountName,
+      });
+      setError(null);
+      setStep("success");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Cash out failed. Please try again.");
+      setStep("details");
+    }
   };
 
   return (
@@ -60,6 +75,11 @@ export default function CashOutPage() {
       {/* Step 2: Enter details */}
       {step === "details" && (
         <div className="rounded-xl border border-black/[0.04] bg-white p-5 space-y-4">
+          {error && (
+            <div className="rounded-lg border border-red-100 bg-red-50 px-3 py-2 text-[12px] text-red-600">
+              {error}
+            </div>
+          )}
           <div className="space-y-1.5">
             <Label className="text-[11px] font-medium text-gray-400 uppercase tracking-wide">Amount (PHP)</Label>
             <Input type="number" value={amount} onChange={e => setAmount(e.target.value)} placeholder="0.00" className="h-12 rounded-lg border-black/[0.08] bg-[#FAFAF9] text-[20px] font-semibold text-center" />

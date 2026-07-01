@@ -19,6 +19,7 @@ class WalletResponse(BaseModel):
     id: uuid.UUID
     user_id: uuid.UUID
     public_key: str
+    balance: float = 0.0
     network: str
     created_at: datetime
 

@@ -19,6 +19,7 @@ import {
   type WalletInfo,
   type Transaction,
   type OcrResult,
+  type CashOutRequest,
 } from "@/lib/api-client";
 
 /**
@@ -236,6 +237,17 @@ export function useCreateWallet() {
     mutationFn: () => apiClient.funding.createWallet(),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.funding.wallet });
+    },
+  });
+}
+
+export function useCashOut() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: CashOutRequest) => apiClient.funding.cashOut(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.funding.wallet });
+      queryClient.invalidateQueries({ queryKey: queryKeys.funding.transactions() });
     },
   });
 }

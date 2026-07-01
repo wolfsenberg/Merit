@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowDownLeft, ArrowUpRight, FileText, CheckCircle2, Clock, Banknote, Filter, ExternalLink } from "lucide-react";
+import { ArrowDownLeft, ArrowUpRight, FileText, CheckCircle2, ExternalLink } from "lucide-react";
+import { useDemoLedger } from "@/lib/demo-ledger";
 
 type TxType = "all" | "application" | "disbursement" | "withdrawal";
 
@@ -17,35 +18,13 @@ interface Transaction {
   scholarship?: string;
 }
 
-const transactions: Transaction[] = [
-  {
-    id: "tx-7",
-    type: "funds_withdrawn",
-    title: "Cash Out to GCash",
-    description: "Withdrawn from Stellar wallet to GCash account",
-    amount: "- PHP 5,000",
-    date: "Jun 27, 2026 — 2:15 PM",
-    status: "completed",
-    txHash: "a3f8c1d2e5...7b9k4m2n",
-    scholarship: "DOST-SEI Merit Scholarship",
-  },
-  {
-    id: "tx-6",
-    type: "funds_disbursed",
-    title: "Scholarship Fund Received",
-    description: "DOST-SEI Merit Scholarship — 1st Semester disbursement",
-    amount: "+ PHP 10,000",
-    date: "Jun 25, 2026 — 10:00 AM",
-    status: "completed",
-    txHash: "d46785c4b9...588c0c82a3",
-    scholarship: "DOST-SEI Merit Scholarship",
-  },
+const activityTransactions: Transaction[] = [
   {
     id: "tx-5",
     type: "documents_verified",
     title: "Documents Verified",
     description: "All submitted documents passed AI verification (94% confidence)",
-    date: "Jun 23, 2026 — 3:42 PM",
+    date: "Jun 23, 2026, 3:42 PM",
     status: "completed",
     scholarship: "DOST-SEI Merit Scholarship",
   },
@@ -54,7 +33,7 @@ const transactions: Transaction[] = [
     type: "application_accepted",
     title: "Application Accepted",
     description: "Your scholarship application has been approved",
-    date: "Jun 22, 2026 — 9:10 AM",
+    date: "Jun 22, 2026, 9:10 AM",
     status: "completed",
     scholarship: "DOST-SEI Merit Scholarship",
   },
@@ -63,7 +42,7 @@ const transactions: Transaction[] = [
     type: "application_submitted",
     title: "Application Submitted",
     description: "Submitted application with 3 documents for verification",
-    date: "Jun 20, 2026 — 11:30 AM",
+    date: "Jun 20, 2026, 11:30 AM",
     status: "completed",
     scholarship: "DOST-SEI Merit Scholarship",
   },
@@ -72,19 +51,9 @@ const transactions: Transaction[] = [
     type: "application_submitted",
     title: "Application Submitted",
     description: "Submitted application to SM Foundation Scholarship",
-    date: "Jun 18, 2026 — 4:05 PM",
+    date: "Jun 18, 2026, 4:05 PM",
     status: "pending",
     scholarship: "SM Foundation Scholarship",
-  },
-  {
-    id: "tx-1",
-    type: "funds_disbursed",
-    title: "Wallet Funded",
-    description: "Initial testnet funding for wallet activation",
-    amount: "+ 100 XLM",
-    date: "Jun 15, 2026 — 8:00 AM",
-    status: "completed",
-    txHash: "5e9715d7dd...54ec262f",
   },
 ];
 
@@ -97,6 +66,20 @@ const typeFilter: Record<TxType, string> = {
 
 export default function TransactionsPage() {
   const [activeFilter, setActiveFilter] = useState<TxType>("all");
+  const { ledger } = useDemoLedger();
+
+  const moneyTransactions: Transaction[] = ledger.transactions.map((tx) => ({
+    id: tx.id,
+    type: tx.type,
+    title: tx.title,
+    description: tx.description,
+    amount: `${tx.amount >= 0 ? "+" : "-"} PHP ${Math.abs(tx.amount).toLocaleString()}`,
+    date: tx.date,
+    status: tx.status,
+    txHash: tx.txHash,
+    scholarship: tx.scholarship,
+  }));
+  const transactions = [...moneyTransactions, ...activityTransactions];
 
   const filtered = activeFilter === "all" ? transactions : transactions.filter(tx => {
     if (activeFilter === "application") return tx.type === "application_submitted" || tx.type === "application_accepted";
@@ -112,7 +95,6 @@ export default function TransactionsPage() {
         <p className="mt-1 text-[13px] text-gray-400">Complete history of your scholarship activity</p>
       </div>
 
-      {/* Filter tabs */}
       <div className="flex items-center gap-1 rounded-lg bg-white border border-black/[0.04] p-1 w-fit overflow-x-auto">
         {(Object.keys(typeFilter) as TxType[]).map((key) => (
           <button key={key} onClick={() => setActiveFilter(key)}
@@ -124,7 +106,6 @@ export default function TransactionsPage() {
         ))}
       </div>
 
-      {/* Transaction list */}
       <div className="rounded-xl border border-black/[0.04] bg-white overflow-hidden">
         {filtered.map((tx, idx) => (
           <TransactionRow key={tx.id} tx={tx} isLast={idx === filtered.length - 1} />
@@ -167,7 +148,7 @@ function TransactionRow({ tx, isLast }: { tx: Transaction; isLast: boolean }) {
           <span className="text-[10px] text-gray-400">{tx.date}</span>
           {tx.txHash && (
             <span className="flex items-center gap-0.5 text-[10px] text-gray-400 font-mono">
-              <ExternalLink className="h-2.5 w-2.5" /> {tx.txHash}
+              <ExternalLink className="h-2.5 w-2.5" /> {tx.txHash.slice(0, 16)}...
             </span>
           )}
         </div>

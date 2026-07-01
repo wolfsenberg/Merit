@@ -20,6 +20,10 @@ AI-assisted conditional funding platform that automates the end-to-end lifecycle
 | **Network** | Stellar Testnet |
 | **Deployer Account** | [`GBC2Q2YBDDQESKGRUKKJ4PKPJ7H7JG6D6CELW4AAKYMNCSVYPF5C5ECN`](https://stellar.expert/explorer/testnet/account/GBC2Q2YBDDQESKGRUKKJ4PKPJ7H7JG6D6CELW4AAKYMNCSVYPF5C5ECN) |
 
+<img width="1130" height="474" alt="Screenshot 2026-06-29 192745" src="https://github.com/user-attachments/assets/d4059a97-a3d3-470c-bb74-ae38a5155469" />
+<img width="1482" height="414" alt="Screenshot 2026-06-29 194526" src="https://github.com/user-attachments/assets/9bbbc4ac-49fd-4926-ac74-9eecd67dd02c" />
+
+
 **Verify on Stellar Expert:**
 - [View Contract](https://stellar.expert/explorer/testnet/contract/CCTEUDESKDOVX2XT5OY4CYTFPVSYOXETBRNY6OW7Z36TEB2EWLELWKWF)
 - [View Deploy Transaction](https://stellar.expert/explorer/testnet/tx/ddf89015528d31eae82f2d0c3726966426b210fb4b3bca8d97f6e72775dbec53)

@@ -5,46 +5,29 @@ import { useParams, useRouter } from "next/navigation";
 import { ArrowLeft, CheckCircle2, XCircle, Clock, Upload, Users, Banknote, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-
-interface Scholar {
-  id: string;
-  name: string;
-  email: string;
-  studentId: string;
-  university: string;
-  status: "pending" | "approved" | "rejected";
-  appliedDate: string;
-  amount: string;
-}
-
-const mockScholars: Scholar[] = [
-  { id: "s1", name: "Maria Santos", email: "maria.santos@up.edu.ph", studentId: "2022-04521", university: "UP Diliman", status: "pending", appliedDate: "Jun 15, 2026", amount: "PHP 10,000" },
-  { id: "s2", name: "Juan Reyes", email: "j.reyes@ust.edu.ph", studentId: "2021-89032", university: "UST", status: "pending", appliedDate: "Jun 16, 2026", amount: "PHP 10,000" },
-  { id: "s3", name: "Ana Cruz", email: "ana.cruz@admu.edu.ph", studentId: "2023-12890", university: "Ateneo de Manila", status: "pending", appliedDate: "Jun 17, 2026", amount: "PHP 10,000" },
-  { id: "s4", name: "Carlos Garcia", email: "c.garcia@dlsu.edu.ph", studentId: "2022-56781", university: "De La Salle University", status: "pending", appliedDate: "Jun 18, 2026", amount: "PHP 10,000" },
-  { id: "s5", name: "Demo User", email: "demo@merit.app", studentId: "2023-00001", university: "PUP Manila", status: "approved", appliedDate: "Jun 10, 2026", amount: "PHP 10,000" },
-  { id: "s6", name: "Grace Lim", email: "g.lim@tup.edu.ph", studentId: "2022-33445", university: "TUP Manila", status: "approved", appliedDate: "Jun 8, 2026", amount: "PHP 10,000" },
-];
+import { disburseToScholar, rejectScholarDemo, useAdminDemoState } from "@/lib/demo-ledger";
 
 export default function ManageScholarshipPage() {
   const router = useRouter();
   const params = useParams();
-  const [scholars, setScholars] = useState(mockScholars);
+  const { scholars, records } = useAdminDemoState();
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState<"pending" | "approved" | "all">("pending");
 
   const programName = params.id === "dost-sei" ? "DOST-SEI Merit Scholarship" : "CHED Tulong Dunong Program";
 
   const handleApprove = (scholarId: string) => {
-    setScholars(prev => prev.map(s => s.id === scholarId ? { ...s, status: "approved" as const } : s));
+    disburseToScholar(scholarId, programName);
   };
 
   const handleReject = (scholarId: string) => {
-    setScholars(prev => prev.map(s => s.id === scholarId ? { ...s, status: "rejected" as const } : s));
+    rejectScholarDemo(scholarId);
   };
 
   const handleBatchApprove = () => {
-    setScholars(prev => prev.map(s => s.status === "pending" ? { ...s, status: "approved" as const } : s));
+    scholars.filter(s => s.status === "pending").forEach((scholar) => {
+      disburseToScholar(scholar.id, programName);
+    });
   };
 
   const filtered = scholars
@@ -53,6 +36,7 @@ export default function ManageScholarshipPage() {
 
   const pendingCount = scholars.filter(s => s.status === "pending").length;
   const approvedCount = scholars.filter(s => s.status === "approved").length;
+  const totalDisbursed = records.reduce((sum, record) => sum + record.amount, 0);
 
   return (
     <div className="space-y-6">
@@ -68,7 +52,7 @@ export default function ManageScholarshipPage() {
           <div className="flex items-center gap-4 mt-1.5 text-[11px] text-gray-400">
             <span className="flex items-center gap-1"><Users className="h-3 w-3" />{approvedCount} approved</span>
             <span className="flex items-center gap-1"><Clock className="h-3 w-3" />{pendingCount} pending</span>
-            <span className="flex items-center gap-1"><Banknote className="h-3 w-3" />PHP {(approvedCount * 10000).toLocaleString()} disbursed</span>
+            <span className="flex items-center gap-1"><Banknote className="h-3 w-3" />PHP {totalDisbursed.toLocaleString()} disbursed</span>
           </div>
         </div>
         <div className="flex gap-2">
@@ -133,7 +117,7 @@ export default function ManageScholarshipPage() {
               )}
               {scholar.status === "approved" && (
                 <span className="flex items-center gap-1 text-[10px] font-medium text-emerald-600 shrink-0">
-                  <CheckCircle2 className="h-3 w-3" /> Approved &mdash; {scholar.amount} sent
+                  <CheckCircle2 className="h-3 w-3" /> Approved - PHP {scholar.amount.toLocaleString()} sent
                 </span>
               )}
               {scholar.status === "rejected" && (
@@ -144,6 +128,31 @@ export default function ManageScholarshipPage() {
             </div>
           ))
         )}
+      </div>
+
+      <div>
+        <h2 className="text-[12px] font-medium text-gray-400 uppercase tracking-wider mb-3">Disbursement Records</h2>
+        <div className="rounded-xl border border-black/[0.04] bg-white overflow-hidden">
+          {records.length === 0 ? (
+            <div className="py-10 text-center text-[13px] text-gray-400">No scholars have been paid yet.</div>
+          ) : (
+            records.map((record, idx) => (
+              <div key={record.id} className={`flex items-center gap-3 px-4 py-3 ${idx < records.length - 1 ? "border-b border-black/[0.03]" : ""}`}>
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-50">
+                  <Banknote className="h-4 w-4 text-emerald-600" strokeWidth={1.8} />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-[13px] font-medium text-gray-900">{record.scholarName}</p>
+                  <p className="text-[11px] text-gray-400 truncate">{record.scholarEmail} - {record.programName}</p>
+                </div>
+                <div className="text-right shrink-0">
+                  <p className="text-[13px] font-semibold text-emerald-600">PHP {record.amount.toLocaleString()}</p>
+                  <p className="text-[10px] text-gray-400 font-mono">{record.txHash.slice(0, 16)}...</p>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
       </div>
 
       {/* Info box */}

@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { MessageCircle, Heart, Share2, ExternalLink, Plus, Clock, Send, ArrowLeft, AlertCircle, CheckCircle2, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useLang } from "@/lib/i18n";
+import { getUser } from "@/lib/auth";
 
 type Tab = "share" | "concerns";
 type ConcernView = "programs" | "list" | "new";
@@ -18,12 +19,27 @@ interface Post {
   title: string; body: string; link?: string; likes: number; comments: number; liked: boolean;
 }
 
+interface HubComment {
+  id: string; postId: string; author: string; initials: string; university: string; body: string; time: string;
+}
+
 const posts: Post[] = [
   { id: "p1", author: "Maria S.", initials: "MS", university: "UP Diliman", time: "2h ago", title: "DOST-SEI RA 7687", body: "Applications for next sem are open na! Deadline is January. GWA requirement is 1.75. Worth it — full tuition + 7K monthly stipend.", link: "https://www.sei.dost.gov.ph", likes: 24, comments: 8, liked: false },
   { id: "p2", author: "Juan R.", initials: "JR", university: "PUP Manila", time: "5h ago", title: "SM Foundation College Scholarship", body: "For incoming freshmen and current college students na may 85%+ GWA. Application is March-April. Full tuition + monthly allowance + books.", link: "https://www.sm-foundation.org", likes: 31, comments: 12, liked: true },
   { id: "p3", author: "Ana C.", initials: "AC", university: "PLM", time: "1d ago", title: "QC Iskolar ng Bayan", body: "Para sa mga taga-QC! Every June and November pwede mag-apply. Need 3+ years residency at least 85% GWA. Around 8K-15K per sem.", likes: 18, comments: 5, liked: false },
   { id: "p4", author: "Carlos G.", initials: "CG", university: "TUP", time: "2d ago", title: "Makati City College Grant", body: "If taga-Makati ka (5+ yrs resident), libre lahat sa UMak — tuition, books, monthly 5K stipend, uniform.", likes: 42, comments: 15, liked: true },
 ];
+
+const seedComments: HubComment[] = [
+  { id: "cm1", postId: "p1", author: "Demo User", initials: "DU", university: "PUP Manila", body: "Need pa rin ba certificate of indigency kahit merit track?", time: "1h ago" },
+  { id: "cm2", postId: "p1", author: "Maria S.", initials: "MS", university: "UP Diliman", body: "For RA 7687 yes, for merit usually grades and enrollment docs muna.", time: "45m ago" },
+  { id: "cm3", postId: "p2", author: "Grace L.", initials: "GL", university: "TUP Manila", body: "May interview ba after initial screening?", time: "3h ago" },
+  { id: "cm4", postId: "p3", author: "Ana C.", initials: "AC", university: "PLM", body: "Tip: prepare barangay residency early kasi matagal minsan.", time: "20h ago" },
+  { id: "cm5", postId: "p4", author: "Carlos G.", initials: "CG", university: "TUP", body: "They usually ask for updated voter/residency proof every renewal.", time: "1d ago" },
+];
+
+const POSTS_KEY = "merit_demo_hub_posts";
+const COMMENTS_KEY = "merit_demo_hub_comments";
 
 interface ScholarshipProgram {
   id: string; name: string; provider: string; openConcerns: number; totalConcerns: number;
@@ -81,12 +97,96 @@ export default function ScholarsHubPage() {
 // ============================================================
 
 function ShareTab() {
-  const [feedPosts, setFeedPosts] = useState(posts);
+  const [feedPosts, setFeedPosts] = useState<Post[]>(posts);
+  const [comments, setComments] = useState<HubComment[]>(seedComments);
+  const [openComments, setOpenComments] = useState<Record<string, boolean>>({});
+  const [commentDrafts, setCommentDrafts] = useState<Record<string, string>>({});
   const [showNewPost, setShowNewPost] = useState(false);
   const [newPostText, setNewPostText] = useState("");
 
+  useEffect(() => {
+    const storedPosts = localStorage.getItem(POSTS_KEY);
+    const storedComments = localStorage.getItem(COMMENTS_KEY);
+
+    if (storedPosts) {
+      try {
+        setFeedPosts(JSON.parse(storedPosts) as Post[]);
+      } catch {}
+    }
+    if (storedComments) {
+      try {
+        setComments(JSON.parse(storedComments) as HubComment[]);
+      } catch {}
+    }
+  }, []);
+
+  const persistPosts = (nextPosts: Post[]) => {
+    setFeedPosts(nextPosts);
+    localStorage.setItem(POSTS_KEY, JSON.stringify(nextPosts));
+  };
+
+  const persistComments = (nextComments: HubComment[]) => {
+    setComments(nextComments);
+    localStorage.setItem(COMMENTS_KEY, JSON.stringify(nextComments));
+  };
+
   const handleLike = (id: string) => {
-    setFeedPosts(prev => prev.map(p => p.id === id ? { ...p, liked: !p.liked, likes: p.liked ? p.likes - 1 : p.likes + 1 } : p));
+    const nextPosts = feedPosts.map(p => p.id === id ? { ...p, liked: !p.liked, likes: p.liked ? p.likes - 1 : p.likes + 1 } : p);
+    persistPosts(nextPosts);
+  };
+
+  const getCurrentCommenter = () => {
+    const user = getUser();
+    const fullName = user?.full_name || "Demo User";
+    return {
+      author: fullName,
+      initials: fullName.split(" ").map(part => part[0]).join("").slice(0, 2).toUpperCase() || "DU",
+      university: "Merit Scholar",
+    };
+  };
+
+  const handlePost = () => {
+    const body = newPostText.trim();
+    if (!body) return;
+
+    const user = getCurrentCommenter();
+    const nextPost: Post = {
+      id: `p-${Date.now()}`,
+      author: user.author,
+      initials: user.initials,
+      university: user.university,
+      time: "Just now",
+      title: "Scholarship tip",
+      body,
+      likes: 0,
+      comments: 0,
+      liked: false,
+    };
+
+    persistPosts([nextPost, ...feedPosts]);
+    setShowNewPost(false);
+    setNewPostText("");
+  };
+
+  const handleComment = (postId: string) => {
+    const body = commentDrafts[postId]?.trim();
+    if (!body) return;
+
+    const user = getCurrentCommenter();
+    const nextComment: HubComment = {
+      id: `cm-${Date.now()}`,
+      postId,
+      author: user.author,
+      initials: user.initials,
+      university: user.university,
+      body,
+      time: "Just now",
+    };
+
+    persistComments([nextComment, ...comments]);
+    persistPosts(feedPosts.map(post => post.id === postId ? { ...post, comments: post.comments + 1 } : post));
+    setCommentDrafts(prev => ({ ...prev, [postId]: "" }));
+    setOpenComments(prev => ({ ...prev, [postId]: true }));
   };
 
   return (
@@ -97,7 +197,7 @@ function ShareTab() {
             <textarea value={newPostText} onChange={e => setNewPostText(e.target.value)} placeholder="Share a scholarship tip or recommendation..." className="w-full h-20 rounded-lg border border-black/[0.06] bg-[#FAFAF9] px-3 py-2 text-[13px] resize-none focus:outline-none focus:border-merit-gold" />
             <div className="flex justify-end gap-2">
               <Button onClick={() => setShowNewPost(false)} variant="ghost" className="h-8 text-[11px]">Cancel</Button>
-              <Button onClick={() => { setShowNewPost(false); setNewPostText(""); }} className="h-8 rounded-lg bg-merit-gold hover:bg-gold-500 text-white text-[11px] px-3">Post</Button>
+              <Button onClick={handlePost} disabled={!newPostText.trim()} className="h-8 rounded-lg bg-merit-gold hover:bg-gold-500 text-white text-[11px] px-3">Post</Button>
             </div>
           </div>
         ) : (
@@ -119,9 +219,41 @@ function ShareTab() {
           {post.link && <a href={post.link} target="_blank" rel="noopener noreferrer" className="mt-1.5 inline-flex items-center gap-1 text-[10px] font-medium text-merit-gold">Link <ExternalLink className="h-2.5 w-2.5" /></a>}
           <div className="mt-2.5 flex items-center gap-4 pt-2.5 border-t border-black/[0.03]">
             <button onClick={() => handleLike(post.id)} className={`flex items-center gap-1 text-[10px] font-medium ${post.liked ? "text-red-500" : "text-gray-400"}`}><Heart className={`h-3 w-3 ${post.liked ? "fill-current" : ""}`} /> {post.likes}</button>
-            <button className="flex items-center gap-1 text-[10px] font-medium text-gray-400"><MessageCircle className="h-3 w-3" /> {post.comments}</button>
+            <button onClick={() => setOpenComments(prev => ({ ...prev, [post.id]: !prev[post.id] }))} className={`flex items-center gap-1 text-[10px] font-medium ${openComments[post.id] ? "text-merit-gold" : "text-gray-400"}`}><MessageCircle className="h-3 w-3" /> {post.comments}</button>
             <button className="flex items-center gap-1 text-[10px] font-medium text-gray-400"><Share2 className="h-3 w-3" /> Share</button>
           </div>
+          {openComments[post.id] && (
+            <div className="mt-3 space-y-3 border-t border-black/[0.03] pt-3">
+              <div className="flex gap-2">
+                <Input
+                  value={commentDrafts[post.id] || ""}
+                  onChange={e => setCommentDrafts(prev => ({ ...prev, [post.id]: e.target.value }))}
+                  placeholder="Write a comment..."
+                  className="h-9 rounded-lg border-black/[0.06] bg-[#FAFAF9] text-[12px]"
+                />
+                <Button onClick={() => handleComment(post.id)} disabled={!commentDrafts[post.id]?.trim()} className="h-9 rounded-lg bg-gray-900 px-3 text-[11px] text-white hover:bg-gray-800">
+                  <Send className="h-3 w-3" />
+                </Button>
+              </div>
+              <div className="space-y-2">
+                {comments.filter(comment => comment.postId === post.id).map(comment => (
+                  <div key={comment.id} className="flex gap-2">
+                    <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#FAFAF9] text-[8px] font-semibold text-gray-500 border border-black/[0.04]">{comment.initials}</div>
+                    <div className="min-w-0 flex-1 rounded-lg bg-[#FAFAF9] px-3 py-2">
+                      <div className="flex items-center gap-1.5">
+                        <p className="text-[11px] font-medium text-gray-900">{comment.author}</p>
+                        <span className="text-[9px] text-gray-400">{comment.time}</span>
+                      </div>
+                      <p className="mt-0.5 text-[11px] leading-relaxed text-gray-600">{comment.body}</p>
+                    </div>
+                  </div>
+                ))}
+                {comments.filter(comment => comment.postId === post.id).length === 0 && (
+                  <p className="py-2 text-center text-[11px] text-gray-400">No comments yet.</p>
+                )}
+              </div>
+            </div>
+          )}
         </div>
       ))}
     </div>

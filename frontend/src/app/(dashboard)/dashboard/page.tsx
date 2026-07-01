@@ -6,15 +6,18 @@ import { ArrowDownLeft, ArrowUpRight, PiggyBank, Wallet, Receipt, Search, Trendi
 import Link from "next/link";
 import { useXlmRate, phpToXlm, formatCurrency } from "@/hooks/use-xlm-rate";
 import { useLang } from "@/lib/i18n";
+import { useDemoLedger } from "@/lib/demo-ledger";
 
 export default function DashboardPage() {
   const user = getUser();
   const { text } = useLang();
   const [showXlm, setShowXlm] = useState(false);
   const { rate, loading, lastUpdated } = useXlmRate();
+  const { ledger } = useDemoLedger();
 
-  const balancePhp = 10000;
+  const balancePhp = ledger.balancePhp;
   const balanceXlm = phpToXlm(balancePhp, rate);
+  const recentTransactions = ledger.transactions.slice(0, 3);
 
   return (
     <div className="space-y-6">
@@ -115,9 +118,17 @@ export default function DashboardPage() {
           <Link href="/transactions" className="text-[11px] font-medium text-merit-gold">{text("dash.see_all")}</Link>
         </div>
         <div className="rounded-xl border border-black/[0.04] bg-white overflow-hidden">
-          <TxRow icon={<ArrowDownLeft className="h-4 w-4 text-emerald-500" />} title="Scholarship Received" sub="DOST-SEI Fund" amount="+ PHP 10,000" date="Jun 25" />
-          <TxRow icon={<ArrowUpRight className="h-4 w-4 text-orange-500" />} title="Cash Out to GCash" sub="•••• 1234" amount="- PHP 5,000" date="Jun 27" />
-          <TxRow icon={<PiggyBank className="h-4 w-4 text-merit-gold" />} title="Saved to Laptop Fund" sub="Goal: PHP 10,000" amount="- PHP 3,500" date="Jun 27" last />
+          {recentTransactions.map((tx, index) => (
+            <TxRow
+              key={tx.id}
+              icon={tx.type === "funds_withdrawn" ? <ArrowUpRight className="h-4 w-4 text-orange-500" /> : <ArrowDownLeft className="h-4 w-4 text-emerald-500" />}
+              title={tx.title}
+              sub={tx.description}
+              amount={`${tx.amount >= 0 ? "+" : "-"} PHP ${Math.abs(tx.amount).toLocaleString()}`}
+              date={tx.date.split(",")[0]}
+              last={index === recentTransactions.length - 1}
+            />
+          ))}
         </div>
       </div>
     </div>

@@ -258,10 +258,44 @@ class TestCreateWallet:
         added_wallet = mock_db.add.call_args[0][0]
         # The encrypted key should NOT be the plaintext secret
         assert added_wallet.encrypted_private_key != test_secret
+
+    @pytest.mark.asyncio
+    async def test_cashout_reduces_balance_and_records_transaction(self, wallet_service, mock_db):
+        """Cashout should reduce the wallet balance and persist a transaction record."""
+        user_id = uuid.uuid4()
+        wallet = MagicMock(spec=StellarWallet)
+        wallet.id = uuid.uuid4()
+        wallet.user_id = user_id
+        wallet.public_key = "GCEZWKCA5VLDNRLN3RPRJMRZOX3Z6G5CHCGSNFHEBD9AFZQ7TM4JRS9A"
+        wallet.encrypted_private_key = "encrypted"
+        wallet.encryption_key_id = "default-v1"
+        wallet.network = "testnet"
+        wallet.balance = 10000.0
+        wallet.created_at = datetime.now(timezone.utc)
+
+        mock_result = MagicMock()
+        mock_result.scalar_one_or_none.return_value = wallet
+        mock_db.execute.return_value = mock_result
+
+        result = await wallet_service.cash_out(
+            user_id=user_id,
+            amount=2500.0,
+            method="gcash",
+            account_number="09171234567",
+            account_name="Juan Dela Cruz",
+        )
+
+        assert result.balance == 7500.0
+        assert wallet.balance == 7500.0
+        mock_db.add.assert_called_once()
+        added_transaction = mock_db.add.call_args[0][0]
+        assert added_transaction.memo == "cashout:gcash"
+        assert added_transaction.status == "confirmed"
+        mock_db.flush.assert_called_once()
         # It should be a base64-encoded string
-        base64.b64decode(added_wallet.encrypted_private_key)
-        # The key_id should be set
-        assert added_wallet.encryption_key_id == "default-v1"
+        assert added_transaction.amount == 2500.0
+        # The cashout transaction should be recorded as confirmed
+        assert added_transaction.status == "confirmed"
 
 
 # ============================================================

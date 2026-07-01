@@ -4,7 +4,7 @@ import uuid
 from datetime import datetime
 from typing import TYPE_CHECKING
 
-from sqlalchemy import ForeignKey, String, func
+from sqlalchemy import ForeignKey, Numeric, String, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.database import Base
@@ -25,6 +25,7 @@ class StellarWallet(Base):
     public_key: Mapped[str] = mapped_column(String(56), unique=True, nullable=False)
     encrypted_private_key: Mapped[str] = mapped_column(String(512), nullable=False)
     encryption_key_id: Mapped[str] = mapped_column(String(255), nullable=False)
+    balance: Mapped[float] = mapped_column(Numeric(14, 7), default=0.0, nullable=False)
     network: Mapped[str] = mapped_column(String(20), default="testnet")
     created_at: Mapped[datetime] = mapped_column(default=func.now())
 

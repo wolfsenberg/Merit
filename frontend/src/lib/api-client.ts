@@ -172,10 +172,27 @@ export interface RuleResult {
 }
 
 export interface WalletInfo {
-  wallet_id: string;
+  id: string;
+  user_id: string;
   public_key: string;
-  network: string;
   balance: number;
+  network: string;
+  created_at: string;
+}
+
+export interface CashOutRequest {
+  amount: number;
+  method: string;
+  account_number: string;
+  account_name: string;
+}
+
+export interface CashOutResponse {
+  id: string;
+  user_id: string;
+  balance: number;
+  status: string;
+  memo?: string;
   created_at: string;
 }
 
@@ -325,6 +342,9 @@ export const apiClient = {
     },
     createWallet() {
       return post<WalletInfo>("/funding/wallet");
+    },
+    cashOut(data: CashOutRequest) {
+      return post<CashOutResponse>("/funding/cashout", data);
     },
     disburse(data: DisbursementRequest) {
       return post<Transaction>("/funding/disburse", data);

@@ -19,6 +19,7 @@ from stellar_sdk import Keypair
 from app.core.config import get_settings
 from app.models.funding_pool import FundingPool
 from app.models.stellar_wallet import StellarWallet
+from app.models.transaction import Transaction
 from app.schemas.wallet import FundingPoolResponse, WalletResponse
 
 settings = get_settings()
@@ -192,6 +193,7 @@ class WalletService:
             public_key=public_key,
             encrypted_private_key=encrypted_secret,
             encryption_key_id=key_id,
+            balance=0.0,
             network=network,
             created_at=datetime.now(timezone.utc),
         )
@@ -223,6 +225,49 @@ class WalletService:
         wallet = result.scalar_one_or_none()
         if wallet is None:
             raise WalletNotFoundError()
+
+        return WalletResponse.model_validate(wallet)
+
+    async def cash_out(
+        self,
+        user_id: uuid.UUID,
+        amount: float,
+        method: str,
+        account_number: str,
+        account_name: str,
+    ) -> WalletResponse:
+        """Record a wallet cashout and reduce the user's balance."""
+        if amount <= 0:
+            raise WalletServiceError("Cashout amount must be greater than zero.", status_code=400)
+
+        result = await self.db.execute(
+            select(StellarWallet).where(StellarWallet.user_id == user_id)
+        )
+        wallet = result.scalar_one_or_none()
+        if wallet is None:
+            raise WalletNotFoundError()
+
+        if float(wallet.balance) < amount:
+            raise WalletServiceError("Insufficient wallet balance for cashout.", status_code=400)
+
+        wallet.balance = float(wallet.balance) - amount
+
+        transaction = Transaction(
+            id=uuid.uuid4(),
+            program_id=uuid.uuid4(),
+            recipient_id=user_id,
+            stellar_tx_hash=f"cashout_{uuid.uuid4().hex[:16]}",
+            from_address=wallet.public_key,
+            to_address=f"cashout:{method}:{account_number}",
+            amount=amount,
+            asset_code="PHP",
+            status="confirmed",
+            memo=f"cashout:{method}",
+            created_at=datetime.now(timezone.utc),
+            confirmed_at=datetime.now(timezone.utc),
+        )
+        self.db.add(transaction)
+        await self.db.flush()
 
         return WalletResponse.model_validate(wallet)
 

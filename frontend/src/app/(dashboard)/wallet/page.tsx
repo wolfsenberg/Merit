@@ -1,26 +1,14 @@
 "use client";
 
 import { getCachedPublicKey } from "@/lib/freighter";
-import { Wallet, ArrowDownLeft, ExternalLink, Copy, CheckCircle2 } from "lucide-react";
+import { Wallet, ArrowDownLeft, ArrowUpRight, ExternalLink, Copy, CheckCircle2 } from "lucide-react";
 import { useState } from "react";
-
-interface Transaction {
-  id: string;
-  type: "received";
-  amount: string;
-  from: string;
-  date: string;
-  status: "confirmed";
-  hash: string;
-}
-
-const mockTransactions: Transaction[] = [
-  { id: "1", type: "received", amount: "10,000 XLM", from: "DOST-SEI Scholarship Fund", date: "Jun 25, 2026", status: "confirmed", hash: "d46785c4b9c4...588c0c82a3" },
-];
+import { useDemoLedger } from "@/lib/demo-ledger";
 
 export default function WalletPage() {
   const publicKey = getCachedPublicKey();
   const [copied, setCopied] = useState(false);
+  const { ledger } = useDemoLedger();
 
   const handleCopy = () => {
     if (publicKey) {
@@ -45,7 +33,7 @@ export default function WalletPage() {
           </div>
           <div>
             <p className="text-[11px] text-gray-400 uppercase tracking-wide">Balance</p>
-            <p className="text-[24px] font-semibold tracking-tight text-gray-900">10,000 <span className="text-[14px] text-gray-400 font-normal">XLM</span></p>
+            <p className="text-[24px] font-semibold tracking-tight text-gray-900">PHP {ledger.balancePhp.toLocaleString()}<span className="text-[14px] text-gray-400 font-normal">.00</span></p>
           </div>
         </div>
 
@@ -63,22 +51,28 @@ export default function WalletPage() {
       <div>
         <h2 className="text-[13px] font-medium text-gray-400 uppercase tracking-wider mb-3">Transactions</h2>
         <div className="rounded-xl border border-black/[0.04] bg-white overflow-hidden">
-          {mockTransactions.map((tx, idx) => (
-            <div key={tx.id} className={`flex items-center gap-3 p-4 ${idx < mockTransactions.length - 1 ? "border-b border-black/[0.03]" : ""}`}>
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-50">
-                <ArrowDownLeft className="h-4 w-4 text-emerald-600" strokeWidth={1.8} />
+          {ledger.transactions.map((tx, idx) => (
+            <div key={tx.id} className={`flex items-center gap-3 p-4 ${idx < ledger.transactions.length - 1 ? "border-b border-black/[0.03]" : ""}`}>
+              <div className={`flex h-8 w-8 items-center justify-center rounded-lg ${tx.type === "funds_withdrawn" ? "bg-orange-50" : "bg-emerald-50"}`}>
+                {tx.type === "funds_withdrawn" ? (
+                  <ArrowUpRight className="h-4 w-4 text-orange-500" strokeWidth={1.8} />
+                ) : (
+                  <ArrowDownLeft className="h-4 w-4 text-emerald-600" strokeWidth={1.8} />
+                )}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-[13px] font-medium text-gray-900">{tx.from}</p>
+                <p className="text-[13px] font-medium text-gray-900">{tx.title}</p>
                 <p className="text-[11px] text-gray-400">{tx.date}</p>
               </div>
               <div className="text-right">
-                <p className="text-[13px] font-semibold text-emerald-600">+{tx.amount}</p>
-                <p className="text-[10px] text-gray-400 font-mono">{tx.hash}</p>
+                <p className={`text-[13px] font-semibold ${tx.amount >= 0 ? "text-emerald-600" : "text-orange-600"}`}>
+                  {tx.amount >= 0 ? "+" : "-"} PHP {Math.abs(tx.amount).toLocaleString()}
+                </p>
+                <p className="text-[10px] text-gray-400 font-mono">{tx.txHash.slice(0, 12)}...</p>
               </div>
             </div>
           ))}
-          {mockTransactions.length === 0 && (
+          {ledger.transactions.length === 0 && (
             <div className="p-8 text-center text-[13px] text-gray-400">No transactions yet</div>
           )}
         </div>

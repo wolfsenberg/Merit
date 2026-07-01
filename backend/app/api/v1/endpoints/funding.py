@@ -17,6 +17,8 @@ from app.middleware.auth import get_current_user, require_roles
 from app.models.enums import UserRole
 from app.models.user import User
 from app.schemas.funding import (
+    CashOutRequest,
+    CashOutResponse,
     DisbursementRequest,
     DisbursementResponse,
     TransactionHistoryItem,
@@ -93,6 +95,39 @@ async def create_wallet(
         return await service.create_wallet(current_user.id)
     except WalletAlreadyExistsError as e:
         raise HTTPException(status_code=e.status_code, detail=e.message)
+    except WalletServiceError as e:
+        raise HTTPException(status_code=e.status_code, detail=e.message)
+
+
+@router.post(
+    "/cashout",
+    response_model=CashOutResponse,
+    status_code=status.HTTP_201_CREATED,
+    summary="Cash out funds from the current user's wallet",
+)
+async def cash_out(
+    request: CashOutRequest,
+    current_user: User = Depends(require_roles(UserRole.RECIPIENT)),
+    db: AsyncSession = Depends(get_db),
+) -> CashOutResponse:
+    """Reduce the user's wallet balance and record the cashout transaction."""
+    service = WalletService(db=db)
+    try:
+        wallet = await service.cash_out(
+            user_id=current_user.id,
+            amount=request.amount,
+            method=request.method,
+            account_number=request.account_number,
+            account_name=request.account_name,
+        )
+        return CashOutResponse(
+            id=uuid.uuid4(),
+            user_id=current_user.id,
+            balance=wallet.balance,
+            status="confirmed",
+            memo=f"cashout:{request.method}",
+            created_at=wallet.created_at,
+        )
     except WalletServiceError as e:
         raise HTTPException(status_code=e.status_code, detail=e.message)
 

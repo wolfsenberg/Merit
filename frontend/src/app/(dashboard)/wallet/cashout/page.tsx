@@ -11,6 +11,42 @@ import { cashOutDemoLedger, useDemoLedger } from "@/lib/demo-ledger";
 type CashOutMethod = "gcash" | "maya" | "bank" | null;
 type Step = "method" | "details" | "confirm" | "success";
 
+const mobileWalletPattern = /^09\d{9}$/;
+const bankAccountPattern = /^\d{10,16}$/;
+const accountNamePattern = /^[A-Za-z][A-Za-z .'-]{1,59}$/;
+
+function getAccountRules(method: CashOutMethod) {
+  if (method === "bank") {
+    return {
+      label: "Account Number",
+      placeholder: "10-16 digit account number",
+      helper: "Use numbers only, 10-16 digits.",
+      maxLength: 16,
+    };
+  }
+
+  return {
+    label: `${method === "maya" ? "Maya" : "GCash"} Number`,
+    placeholder: "09XXXXXXXXX",
+    helper: "Use an 11-digit mobile number starting with 09.",
+    maxLength: 11,
+  };
+}
+
+function getAccountNumberError(method: CashOutMethod, value: string) {
+  if (!value) return "Account number is required.";
+  if (method === "bank") {
+    return bankAccountPattern.test(value) ? null : "Bank account number must be 10-16 digits.";
+  }
+  return mobileWalletPattern.test(value) ? null : "Mobile wallet number must be 11 digits and start with 09.";
+}
+
+function getAccountNameError(value: string) {
+  const trimmed = value.trim();
+  if (!trimmed) return "Account name is required.";
+  return accountNamePattern.test(trimmed) ? null : "Account name must be 2-60 letters and may include spaces, apostrophe, hyphen, or period.";
+}
+
 export default function CashOutPage() {
   const router = useRouter();
   const [step, setStep] = useState<Step>("method");
@@ -23,8 +59,33 @@ export default function CashOutPage() {
 
   const balance = ledger.balancePhp;
   const parsedAmount = parseFloat(amount) || 0;
+  const accountRules = getAccountRules(method);
+  const accountNumberError = getAccountNumberError(method, accountNumber);
+  const accountNameError = getAccountNameError(accountName);
+  const canReview = !!amount && parsedAmount > 0 && parsedAmount <= balance && !accountNumberError && !accountNameError;
+
+  const handleMethodSelect = (nextMethod: Exclude<CashOutMethod, null>) => {
+    setMethod(nextMethod);
+    setAccountNumber("");
+    setError(null);
+  };
+
+  const handleAccountNumberChange = (value: string) => {
+    const digitsOnly = value.replace(/\D/g, "").slice(0, accountRules.maxLength);
+    setAccountNumber(digitsOnly);
+  };
+
+  const handleAccountNameChange = (value: string) => {
+    setAccountName(value.replace(/[^A-Za-z .'-]/g, "").slice(0, 60));
+  };
 
   const handleSubmit = () => {
+    if (!canReview) {
+      setError(accountNumberError || accountNameError || "Please check your cash out details.");
+      setStep("details");
+      return;
+    }
+
     try {
       cashOutDemoLedger({
         amount: parsedAmount,
@@ -62,9 +123,9 @@ export default function CashOutPage() {
         <div className="space-y-3">
           <p className="text-[12px] font-medium text-gray-400 uppercase tracking-wider">Select cash out method</p>
           <div className="space-y-2">
-            <MethodCard selected={method === "gcash"} onClick={() => setMethod("gcash")} icon={<Smartphone className="h-5 w-5" />} name="GCash" desc="Instant transfer to GCash wallet" />
-            <MethodCard selected={method === "maya"} onClick={() => setMethod("maya")} icon={<Smartphone className="h-5 w-5" />} name="Maya" desc="Instant transfer to Maya wallet" />
-            <MethodCard selected={method === "bank"} onClick={() => setMethod("bank")} icon={<Building2 className="h-5 w-5" />} name="Bank Transfer" desc="BDO, BPI, Unionbank, etc. (1-2 business days)" />
+            <MethodCard selected={method === "gcash"} onClick={() => handleMethodSelect("gcash")} icon={<Smartphone className="h-5 w-5" />} name="GCash" desc="11-digit mobile number starting with 09" />
+            <MethodCard selected={method === "maya"} onClick={() => handleMethodSelect("maya")} icon={<Smartphone className="h-5 w-5" />} name="Maya" desc="11-digit mobile number starting with 09" />
+            <MethodCard selected={method === "bank"} onClick={() => handleMethodSelect("bank")} icon={<Building2 className="h-5 w-5" />} name="Bank Transfer" desc="Numbers only, 10-16 digits" />
           </div>
           <Button onClick={() => setStep("details")} disabled={!method} className="w-full h-10 rounded-lg bg-gray-900 hover:bg-gray-800 text-white text-[13px] font-medium mt-2">
             Continue
@@ -95,19 +156,38 @@ export default function CashOutPage() {
 
           <div className="space-y-1.5">
             <Label className="text-[11px] font-medium text-gray-400 uppercase tracking-wide">
-              {method === "bank" ? "Account Number" : `${method === "gcash" ? "GCash" : "Maya"} Number`}
+              {accountRules.label}
             </Label>
-            <Input value={accountNumber} onChange={e => setAccountNumber(e.target.value)} placeholder={method === "bank" ? "1234567890" : "09XX XXX XXXX"} className="h-10 rounded-lg border-black/[0.08] bg-[#FAFAF9] text-[13px]" />
+            <Input
+              value={accountNumber}
+              onChange={e => handleAccountNumberChange(e.target.value)}
+              placeholder={accountRules.placeholder}
+              inputMode="numeric"
+              maxLength={accountRules.maxLength}
+              className="h-10 rounded-lg border-black/[0.08] bg-[#FAFAF9] text-[13px]"
+            />
+            <p className={`text-[11px] ${accountNumber && accountNumberError ? "text-red-500" : "text-gray-400"}`}>
+              {accountNumber && accountNumberError ? accountNumberError : accountRules.helper}
+            </p>
           </div>
 
           <div className="space-y-1.5">
             <Label className="text-[11px] font-medium text-gray-400 uppercase tracking-wide">Account Name</Label>
-            <Input value={accountName} onChange={e => setAccountName(e.target.value)} placeholder="Juan Dela Cruz" className="h-10 rounded-lg border-black/[0.08] bg-[#FAFAF9] text-[13px]" />
+            <Input
+              value={accountName}
+              onChange={e => handleAccountNameChange(e.target.value)}
+              placeholder="Juan Dela Cruz"
+              maxLength={60}
+              className="h-10 rounded-lg border-black/[0.08] bg-[#FAFAF9] text-[13px]"
+            />
+            <p className={`text-[11px] ${accountName && accountNameError ? "text-red-500" : "text-gray-400"}`}>
+              {accountName && accountNameError ? accountNameError : "Use 2-60 letters. Spaces, apostrophe, hyphen, and period are allowed."}
+            </p>
           </div>
 
           <div className="flex gap-2">
             <Button onClick={() => setStep("method")} variant="ghost" className="flex-1 h-10 rounded-lg text-[12px]">Back</Button>
-            <Button onClick={() => setStep("confirm")} disabled={!amount || parsedAmount <= 0 || parsedAmount > balance || !accountNumber || !accountName} className="flex-1 h-10 rounded-lg bg-gray-900 hover:bg-gray-800 text-white text-[13px] font-medium">
+            <Button onClick={() => setStep("confirm")} disabled={!canReview} className="flex-1 h-10 rounded-lg bg-gray-900 hover:bg-gray-800 text-white text-[13px] font-medium">
               Review
             </Button>
           </div>
